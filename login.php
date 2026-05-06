@@ -1,69 +1,75 @@
-<?php
-session_start();
-
-if(isset($_POST['usuario'])){
-    $_SESSION['usuario'] = $_POST['usuario'];
-    header("Location: index.php");
-    exit();
-}
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
 
-<title>Login - Kondorito Postres</title>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
 
-<body class="bg-pink-50 flex items-center justify-center min-h-screen">
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-yellow-100 via-pink-200 to-pink-300">
 
-<div class="bg-white shadow-xl rounded-2xl p-10 w-96">
+    <!-- Contenedor -->
+    <div class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-96 border border-white/40">
 
-<div class="text-center mb-6">
-<h1 class="text-3xl font-bold text-pink-600">Kondorito</h1>
-<p class="text-gray-500">Inicia sesión para continuar</p>
-</div>
+        <!-- Icono -->
+        <div class="flex justify-center mb-4">
+            <div class="bg-yellow-200 p-5 rounded-full">
+                <i class="fas fa-birthday-cake text-orange-600 text-4xl"></i>
+            </div>
+        </div>
 
-<form action="validar_login.php" method="POST" class="space-y-5">
+        <!-- Título -->
+        <h2 class="text-2xl font-bold text-center text-orange-600 mb-6">
+            Iniciar Sesión
+        </h2>
 
-<div>
-<label class="block text-gray-600 mb-1">Correo electrónico</label>
-<input 
-type="email" 
-name="correo"
-placeholder="ejemplo@correo.com"
-class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-pink-400 focus:outline-none"
-required>
-</div>
+        <!-- Formulario -->
+        <form action="procesar_login.php" method="POST">
 
-<div>
-<label class="block text-gray-600 mb-1">Contraseña</label>
-<input 
-type="password"
-name="contrasena"
-placeholder="********"
-class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-pink-400 focus:outline-none"
-required>
-</div>
+            <!-- Email -->
+            <div class="mb-4">
+                <label class="block text-gray-600 mb-1">Correo</label>
+                <input type="email" name="correo" required
+                    class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
+            </div>
 
-<button 
-type="submit"
-class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 rounded-lg transition">
-Iniciar sesión
-</button>
+            <!-- Password -->
+            <div class="mb-4">
+                <label class="block text-gray-600 mb-1">Contraseña</label>
+                <input type="password" name="password" required
+                    class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
+            </div>
 
-</form>
+            <!-- Botón -->
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform shadow-md">
+                Ingresar
+            </button>
 
-<p class="text-center text-sm text-gray-500 mt-5">
-¿No tienes cuenta?
-<a href="#" class="text-pink-500 hover:underline">Regístrate</a>
-</p>
+        </form>
 
-</div>
+        <!-- Separador -->
+        <div class="flex items-center my-5">
+            <hr class="flex-1 border-gray-300">
+            <span class="px-2 text-gray-400 text-sm">o</span>
+            <hr class="flex-1 border-gray-300">
+        </div>
+
+        <!-- Registro -->
+        <p class="text-center text-sm text-gray-600">
+            ¿No tienes cuenta?
+            <a href="registro.php" class="text-orange-500 font-semibold hover:underline">
+                Regístrate
+            </a>
+        </p>
+
+    </div>
 
 </body>
 </html>

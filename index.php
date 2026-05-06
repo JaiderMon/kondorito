@@ -52,8 +52,8 @@ session_start();
 <body class="min-h-screen bg-pastel-cream font-body text-gray-800">
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white shadow-md">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
+        <div class="container mx-auto px-2">
+            <div class="flex items-center justify-between py-4">
                 <!-- Logo -->
                 <div class="flex items-center">
                     <div class="w-12 h-12 rounded-full bg-pastel-yellow flex items-center justify-center mr-3">
@@ -66,22 +66,36 @@ session_start();
                 </div>
 
                 <!-- Desktop Navigation -->
-                <nav class="hidden md:block">
+                <nav class="hidden md:block ml-20">
                     <ul id="main-nav" class="flex space-x-8"></ul>
                 </nav>
 
                 <!-- Cart and User -->
-                <div class="flex items-center space-x-4">
-                    <div class="hidden md:block">
-                        <a href="#" class="text-gray-700 hover:text-primary">
-                            <i class="fas fa-user text-lg"></i>
-                            <span class="ml-1">Mi cuenta</span>
-                        </a>
-                    </div>
-                    <a href="#cart" id="cart-btn" class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
+               <div class="flex items-center ">
+    <div class="hidden md:block mr-20">
+
+
+        <?php if(isset($_SESSION['usuario'])): ?>
+            <a href="perfil.php" class="text-gray-700 hover:text-primary">
+                <i class="fas fa-user text-lg"></i>
+                <span class="ml-1">Hola, <?php echo $_SESSION['usuario'];?></span>
+            </a>
+        <?php else: ?>
+            <a href="login.php" class="text-gray-700 hover:text-primary">
+                <i class="fas fa-user text-lg"></i>
+                <span class="ml-1">Mi cuenta</span>
+            </a>
+        <?php endif; ?>
+                   <a href="javascript:void(0)"
+                       id="cart-btn"
+                      onclick="openCart()"
+                       class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
                         <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
+    </div>
+</div>
+                   
                     
                     <!-- Mobile Menu Button -->
                     <button id="mobile-menu-btn" class="md:hidden text-2xl text-pastel-brown">
@@ -124,7 +138,7 @@ session_start();
                     </div>
                 </div>
                 <div class="relative">
-                     <div class="w-64 h-64 rounded-full bg-pastel-yellow flex items-center justify-center ml-40">
+                     <div class="w-64 h-64 rounded-full bg-pastel-yellow flex items-center justify-center ml-60">
                         <i class="fas fa-birthday-cake text-9xl text-pastel-brown"></i>
                     </div>
                   
@@ -198,31 +212,14 @@ session_start();
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="py-16 bg-pastel-purple">
-        <div class="container mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold font-display text-pastel-brown mb-4">
-                    Lo que dicen nuestros clientes
-                </h2>
-            </div>
-
-            <div id="testimonials"
-             class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Testimonials will be rendered here -->
-                <div id="testimonials"></div>
-            </div>
-        </div>
-    </section>
-
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-white pt-12 pb-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="max-w-5xl mx-auto px-6">
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-8 justify-items-center">
                 <!-- Company Info -->
                 <div>
-                    <div class="flex items-center mb-6">
+                    <div class="flex items-center  mb-6">
                         <div class="w-10 h-10 rounded-full bg-pastel-yellow flex items-center justify-center mr-3">
                             <i class="fas fa-birthday-cake text-xl text-pastel-brown"></i>
                         </div>
@@ -247,16 +244,21 @@ session_start();
                     </div>
                 </div>
 
-                <!-- Quick Links -->
-                <div>
-                    <h4 class="text-lg font-bold mb-6">Enlaces rápidos</h4>
-                    <ul id="footer-links" class="space-y-3"></ul>
-                </div>
 
                 <!-- Categories -->
                 <div>
                     <h4 class="text-lg font-bold mb-6">Categorías</h4>
-                    <ul id="footer-categories" class="space-y-3"></ul>
+                    <ul id="footer-categories" class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-gray-400">Tortas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-400">Ponques</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-gray-400">Postres</span>
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Contact -->
@@ -305,7 +307,13 @@ session_start();
                         <h3 class="text-2xl font-bold font-display text-pastel-brown">
                             <i class="fas fa-shopping-cart mr-3"></i>Tu carrito
                         </h3>
-                        <button id="close-cart" class="text-3xl text-gray-500 hover:text-gray-800">&times;</button>
+                        <button id="close-cart"
+onclick="closeCart()"
+class="text-3xl text-gray-500 hover:text-gray-800">
+
+    &times;
+
+</button>
                     </div>
                 </div>
                 
@@ -323,23 +331,127 @@ session_start();
                         <span class="text-xl font-bold">Total:</span>
                         <span id="cart-total" class="text-2xl font-bold text-primary">$0.00</span>
                     </div>
-                    <button id="checkout-btn" class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 px-6 rounded-full transition-colors text-lg">
-                        Proceder al pago
-                    </button>
+                   <button id="checkout-btn"
+                     onclick="proceedToCheckout()"
+                      class="w-full bg-pastel-brown hover:bg-secondary text-white py-4 rounded-full font-semibold transition">
+
+                      Proceder al pago
+
+                     </button>
                 </div>
             </div>
         </div>
     </div>
+     <!-- Product Modal -->
+<div id="productModal"
+class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
 
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+
+        <!-- Cerrar -->
+        <button onclick="closeProductModal()"
+            class="absolute top-4 right-4 text-3xl text-gray-500 hover:text-red-500">
+
+            &times;
+
+        </button>
+
+        <!-- Imagen -->
+        <img id="modalImage"
+            class="w-full h-64 object-cover rounded-2xl mb-6">
+
+        <!-- Nombre -->
+        <h2 id="modalName"
+            class="text-3xl font-bold font-display text-pastel-brown mb-4">
+        </h2>
+
+        <!-- Descripción -->
+        <p id="modalDescription"
+            class="text-gray-600 mb-6">
+        </p>
+
+        <!-- Tamaño -->
+        <div class="mb-5">
+
+            <label class="block font-semibold mb-2 text-pastel-brown">
+                Tamaño
+            </label>
+
+            <select id="cakeSize"
+                class="w-full border rounded-xl px-4 py-3">
+
+                <option>Pesa</option>
+                <option>2 Pesas</option>
+                <option>3 Pesas</option>
+                <option>Media libra</option>
+                <option>Libra</option>
+                <option>Libra y media</option>
+
+            </select>
+
+        </div>
+
+        <!-- Relleno -->
+        <div class="mb-5">
+
+            <label class="block font-semibold mb-2 text-pastel-brown">
+                Relleno
+            </label>
+
+            <select id="cakeFill"
+                class="w-full border rounded-xl px-4 py-3">
+
+                <option>Arequipe</option>
+                <option>Fresa</option>
+                <option>Mora</option>
+                <option>Chocolate</option>
+                <option>Durazno</option>
+
+            </select>
+
+        </div>
+
+        <!-- Descripción adicional -->
+        <div class="mb-6">
+
+            <label class="block font-semibold mb-2 text-pastel-brown">
+                Descripción adicional
+            </label>
+
+            <textarea id="extraDescription"
+                rows="4"
+                class="w-full border rounded-xl px-4 py-3"
+                placeholder="Ejemplo: Feliz cumpleaños Manu">
+            </textarea>
+
+        </div>
+
+        <!-- Precio -->
+        <div class="mb-6">
+            <span id="modalPrice"
+                class="text-2xl font-bold text-primary">
+            </span>
+        </div>
+
+        <!-- Botón -->
+        <button onclick="addConfiguredProduct()"
+            class="w-full bg-pastel-pink hover:bg-pink-300 text-pastel-brown font-bold py-4 rounded-full transition">
+
+            Agregar al carrito
+
+        </button>
+
+    </div>
+
+</div>
     <script>
         // Data Layer
         const navigationData = [
             { "label": "Inicio", "href": "#home", "icon": "fas fa-home" },
             { "label": "Catálogo", "href": "#catalog", "icon": "fas fa-book" },
             { "label": "Cómo pedir", "href": "#order", "icon": "fas fa-shopping-bag" },
-            { "label": "Personalizados", "href": "#custom", "icon": "fas fa-palette" },
-            { "label": "Nosotros", "href": "#about", "icon": "fas fa-users" },
-            { "label": "Contacto", "href": "#contact", "icon": "fas fa-envelope" }
+            { "label": "Nosotros", "href": "nosotros.php", "icon": "fas fa-users" },
+            { "label": "Contacto", "href": "contacto.php", "icon": "fas fa-envelope" }
         ];
 
         const featuredProductsData = [
@@ -357,7 +469,7 @@ session_start();
                 "name": "Red Velvet Clásica", 
                 "description": "Bizcocho rojo con frosting de queso crema", 
                 "price": 70000, 
-                "image": "https://i0.wp.com/anandaweb.com/wp-content/uploads/2025/04/Torta-Red-Velvet-Ananda-Mediana-1.png?fit=1080%2C1080&ssl=1", 
+                "image": "https://www.infobae.com/new-resizer/DGoMOTuyK29Gwu_0GG0rzZg4VGk=/arc-anglerfish-arc2-prod-infobae/public/52E6H6YM2NHAHHAR6S7SL47SEM.jpg", 
                 "alt": "Torta Red Velvet con frosting blanco",
                 "category": "Tortas"
             },
@@ -482,22 +594,43 @@ session_start();
 
         function renderFeaturedProducts(products) {
             return products.map(product => `
-                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="relative overflow-hidden">
-                        <img src="${product.image}" alt="${product.alt}" class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy">
-                        <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
-                            $${product.price.toFixed(2)}
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <span class="text-sm text-gray-500 uppercase tracking-wider">${product.category}</span>
-                        <h3 class="text-xl font-bold font-display text-pastel-brown mt-2 mb-3">${product.name}</h3>
-                        <p class="text-gray-600 mb-4">${product.description}</p>
-                        <button onclick="addToCart(${product.id})" class="w-full bg-pastel-pink hover:bg-pink-300 text-pastel-brown font-semibold py-3 rounded-full transition-colors flex items-center justify-center">
-                            <i class="fas fa-cart-plus mr-2"></i> Agregar al carrito
-                        </button>
-                    </div>
-                </div>
+         <div class="group bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col h-full">
+
+    <div class="relative overflow-hidden">
+        <img src="${product.image}" alt="${product.alt}" 
+             class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500" 
+             loading="lazy">
+
+        <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
+            $${product.price.toFixed(2)}
+        </div>
+    </div>
+
+    <div class="p-6 flex flex-col flex-grow">
+
+        <span class="text-sm text-gray-500 uppercase tracking-wider">
+            ${product.category}
+        </span>
+
+        <h3 class="text-xl font-bold font-display text-pastel-brown mt-2 mb-3 min-h-[48px]">
+            ${product.name}
+        </h3>
+
+        <p class="text-gray-600 mb-4 min-h-[52px]">
+            ${product.description}
+        </p>
+
+        <button onclick="openProductModal(${product.id})"
+            class="w-full bg-pastel-pink hover:bg-pink-300 text-pastel-brown font-semibold py-3 rounded-full transition-colors flex items-center justify-center mt-auto">
+
+            <i class="fas fa-cart-plus mr-2"></i>
+            Personalizar producto
+
+        </button>
+
+    </div>
+
+</div>
             `).join("");
         }
 
@@ -534,23 +667,7 @@ session_start();
             `).join("");
         }
 
-        function renderTestimonials(testimonials) {
-            return testimonials.map(testimonial => `
-                <div class="bg-white rounded-2xl shadow-lg p-8">
-                    <div class="flex items-center mb-6">
-                        <img src="${testimonial.image}" alt="${testimonial.alt}" class="w-16 h-16 rounded-full object-cover mr-4">
-                        <div>
-                            <h4 class="font-bold text-lg">${testimonial.name}</h4>
-                            <div class="flex text-yellow-400">
-                                ${'<i class="fas fa-star"></i>'.repeat(testimonial.rating)}
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-gray-600 italic">"${testimonial.comment}"</p>
-                </div>
-            `).join("");
-        }
-
+     
         function renderFooterLinks(links) {
             return links.map(link => `
                 <li><a href="${link.href}" class="text-gray-400 hover:text-white transition-colors">${link.label}</a></li>
@@ -572,6 +689,17 @@ session_start();
                     <div class="flex-grow">
                         <h4 class="font-bold text-gray-800">${item.name}</h4>
                         <p class="text-gray-600 text-sm">${item.description}</p>
+                         <p class="text-xs text-gray-500 mt-1">
+                           Tamaño: ${item.size || 'Normal'}
+                          </p>
+
+                        <p class="text-xs text-gray-500">
+                        Relleno: ${item.fill || 'Ninguno'}
+                       </p>
+
+                       <p class="text-xs text-gray-500">
+                        ${item.extra || ''}
+                        </p>
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center">
                                 <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
@@ -639,6 +767,8 @@ session_start();
             document.getElementById('cart-total').textContent = `$${cartTotal.toFixed(2)}`;
             
             document.getElementById('cart-items').innerHTML = renderCartItems(cartData);
+            // Guardar carrito
+             localStorage.setItem('cart', JSON.stringify(cartData));
         }
 
         function showCartNotification() {
@@ -646,6 +776,59 @@ session_start();
             cartBtn.classList.add('animate-pulse');
             setTimeout(() => cartBtn.classList.remove('animate-pulse'), 1000);
         }
+        // Abrir modal del producto
+function openProductModal(productId) {
+
+    const product = featuredProductsData.find(p => p.id === productId);
+
+    if (!product) return;
+
+    document.getElementById("modalImage").src = product.image;
+    document.getElementById("modalName").textContent = product.name;
+    document.getElementById("modalDescription").textContent = product.description;
+    document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
+
+    // Guardar id actual
+    document.getElementById("productModal").dataset.productId = product.id;
+
+    document.getElementById("productModal").classList.remove("hidden");
+    document.getElementById("productModal").classList.add("flex");
+}
+
+
+// Cerrar modal
+function closeProductModal() {
+
+    document.getElementById("productModal").classList.add("hidden");
+    document.getElementById("productModal").classList.remove("flex");
+
+}
+function addConfiguredProduct() {
+
+    const productId = parseInt(
+        document.getElementById("productModal").dataset.productId
+    );
+
+    const size = document.getElementById("cakeSize").value;
+    const fill = document.getElementById("cakeFill").value;
+    const extra = document.getElementById("extraDescription").value;
+
+    const product = featuredProductsData.find(p => p.id === productId);
+
+    if (!product) return;
+
+    cartData.push({
+        ...product,
+        quantity: 1,
+        size,
+        fill,
+        extra
+    });
+
+    updateCartDisplay();
+    closeProductModal();
+    showCartNotification();
+}
 
         // Event Handlers
         document.addEventListener('DOMContentLoaded', function() {
@@ -678,9 +861,7 @@ session_start();
                 document.getElementById('cart-modal').classList.remove('hidden');
             });
 
-            document.getElementById('close-cart').addEventListener('click', function() {
-                document.getElementById('cart-modal').classList.add('hidden');
-            });
+          document.getElementById('close-cart').onclick = closeCart;
 
             document.getElementById('cart-modal').addEventListener('click', function(e) {
                 if (e.target === this) {
@@ -688,27 +869,7 @@ session_start();
                 }
             });
 
-            // Checkout Button
-            document.getElementById('checkout-btn').addEventListener('click', function() {
-                if (cartData.length === 0) {
-                    alert('Tu carrito está vacío');
-                    return;
-                }
-                alert(`¡Pedido realizado por $${cartTotal.toFixed(2)}! Te contactaremos para confirmar los detalles.`);
-                cartData.length = 0;
-                updateCartDisplay();
-                document.getElementById('cart-modal').classList.add('hidden');
-            });
 
-            // Newsletter Form
-            document.getElementById('newsletter-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const email = this.querySelector('input[type="email"]').value;
-                if (email) {
-                    alert('¡Gracias por suscribirte! Te hemos enviado un correo de confirmación.');
-                    this.reset();
-                }
-            });
 
             // Smooth Scrolling for Navigation Links
             document.addEventListener('click', function(e) {
@@ -756,6 +917,47 @@ session_start();
         window.addToCart = addToCart;
         window.updateQuantity = updateQuantity;
         window.removeFromCart = removeFromCart;
+        function openCart() {
+
+    document.getElementById('cart-modal')
+        .classList.remove('hidden');
+
+}
+
+function closeCart() {
+
+    document.getElementById('cart-modal')
+        .classList.add('hidden');
+
+}
+function proceedToCheckout() {
+
+    // Carrito vacío
+    if (cartData.length === 0) {
+
+        alert('Tu carrito está vacío');
+        return;
+
+    }
+
+    // Verificar sesión
+    const usuarioLogueado = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
+
+    // Si NO inició sesión
+    if (!usuarioLogueado) {
+
+        alert('Debes iniciar sesión para continuar con tu pedido');
+
+        window.location.href = "login.php";
+
+        return;
+
+    }
+
+    // Ir a pago
+    window.location.href = "pago.php";
+
+}
     </script>
 </body>
 </html>

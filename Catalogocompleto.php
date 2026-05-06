@@ -76,6 +76,21 @@ $cantidadCarrito = count($_SESSION['carrito']);
                         <p class="text-sm text-gray-600">Postres y Pasteles</p>
                     </div>
                 </div>
+                <!-- Carrito -->
+                <a href="#cart"
+                 id="cart-btn"
+                 class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
+
+                 <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
+
+                 <span id="cart-count"
+                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+
+                  0
+
+                </span>
+
+</a>
 
                 <!-- Botón volver -->
                 <a href="index.php"
@@ -131,14 +146,143 @@ $cantidadCarrito = count($_SESSION['carrito']);
             </div>
         </div>
     </section>
+<!-- Product Modal -->
+<div id="productModal"
+class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
 
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+
+        <button onclick="closeProductModal()"
+            class="absolute top-4 right-4 text-3xl text-gray-500 hover:text-red-500">
+
+            &times;
+
+        </button>
+
+        <img id="modalImage"
+            class="w-full h-64 object-cover rounded-2xl mb-6">
+
+        <h2 id="modalName"
+            class="text-3xl font-bold font-display text-pastel-brown mb-4">
+        </h2>
+
+        <p id="modalDescription"
+            class="text-gray-600 mb-6">
+        </p>
+
+        <!-- Tamaño -->
+        <div class="mb-5">
+
+            <label class="block font-semibold mb-2">
+                Tamaño
+            </label>
+
+            <select id="cakeSize"
+                class="w-full border rounded-xl px-4 py-3">
+
+                <option>Pesa</option>
+                <option>2 Pesas</option>
+                <option>3 Pesas</option>
+                <option>Media libra</option>
+                <option>Libra</option>
+                <option>Libra y media</option>
+
+            </select>
+
+        </div>
+
+        <!-- Relleno -->
+        <div class="mb-5">
+
+            <label class="block font-semibold mb-2">
+                Relleno
+            </label>
+
+            <select id="cakeFill"
+                class="w-full border rounded-xl px-4 py-3">
+
+                <option>Arequipe</option>
+                <option>Fresa</option>
+                <option>Mora</option>
+                <option>Chocolate</option>
+                <option>Durazno</option>
+
+            </select>
+
+        </div>
+
+        <!-- Extra -->
+        <div class="mb-5">
+
+            <label class="block font-semibold mb-2">
+                Descripción adicional
+            </label>
+
+            <textarea id="extraDescription"
+                rows="4"
+                class="w-full border rounded-xl px-4 py-3">
+            </textarea>
+
+        </div>
+
+        <div class="mb-5">
+            <span id="modalPrice"
+                class="text-2xl font-bold text-primary">
+            </span>
+        </div>
+
+        <button onclick="addConfiguredProduct()"
+            class="w-full bg-pastel-pink hover:bg-pink-300 text-pastel-brown font-bold py-4 rounded-full transition">
+
+            Agregar al carrito
+
+        </button>
+
+    </div>
+
+</div>
+<!-- Cart Modal -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold font-display text-pastel-brown">
+                            <i class="fas fa-shopping-cart mr-3"></i>Tu carrito
+                        </h3>
+                        <button id="close-cart" class="text-3xl text-gray-500 hover:text-gray-800">&times;</button>
+                    </div>
+                </div>
+                
+                <div class="p-6 overflow-y-auto max-h-[60vh]">
+                    <div id="cart-items" class="space-y-4"></div>
+                    <div id="empty-cart" class="text-center py-12">
+                        <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-500 text-lg">Tu carrito está vacío</p>
+                        <p class="text-gray-400">Agrega productos del catálogo</p>
+                    </div>
+                </div>
+                
+                <div class="p-6 border-t bg-gray-50">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xl font-bold">Total:</span>
+                        <span id="cart-total" class="text-2xl font-bold text-primary">$0.00</span>
+                    </div>
+                    <button id="checkout-btn" class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 px-6 rounded-full transition-colors text-lg">
+                        Proceder al pago
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
+        
         const catalogoData = [
             {
                 id: 1,
                 name: "Torta Chocolate Supreme",
                 description: "Chocolate negro con relleno de ganache y frambuesas.",
-                price: 45.99,
+                price: 55000,
                 image: "https://aki-225de.kxcdn.com/wp-content/uploads/2021/01/foto-receta-pastel-chocolate.jpg",
                 alt: "Torta de chocolate",
                 category: "Tortas"
@@ -147,8 +291,8 @@ $cantidadCarrito = count($_SESSION['carrito']);
                 id: 2,
                 name: "Red Velvet Clásica",
                 description: "Bizcocho rojo con frosting de queso crema.",
-                price: 39.99,
-                image: "https://i0.wp.com/anandaweb.com/wp-content/uploads/2025/04/Torta-Red-Velvet-Ananda-Mediana-1.png?fit=1080%2C1080&ssl=1",
+                price: 70000,
+                image: "https://www.infobae.com/new-resizer/DGoMOTuyK29Gwu_0GG0rzZg4VGk=/arc-anglerfish-arc2-prod-infobae/public/52E6H6YM2NHAHHAR6S7SL47SEM.jpg",
                 alt: "Torta Red Velvet",
                 category: "Tortas"
             },
@@ -156,8 +300,8 @@ $cantidadCarrito = count($_SESSION['carrito']);
                 id: 3,
                 name: "Tres Leches",
                 description: "Suave, cremosa y tradicional.",
-                price: 34.99,
-                image: "https://picsum.photos/400/300?random=4",
+                price: 25000,
+                image: "https://irecetasfaciles.com/wp-content/uploads/2019/09/pastel-tres-leches.jpg",
                 alt: "Torta tres leches",
                 category: "Tortas"
             },
@@ -165,26 +309,26 @@ $cantidadCarrito = count($_SESSION['carrito']);
                 id: 4,
                 name: "Cheesecake de Frutos Rojos",
                 description: "Cremoso cheesecake con cubierta de frutos rojos.",
-                price: 42.50,
+                price: 80000,
                 image: "https://cdn.recetasderechupete.com/wp-content/uploads/2018/03/Tarta-de-queso-Antonio.jpg",
                 alt: "Cheesecake",
                 category: "Postres"
             },
             {
                 id: 5,
-                name: "Cupcake de Vainilla",
+                name: "Cupcake de Arcoiris",
                 description: "Esponjoso cupcake con topping suave de vainilla.",
-                price: 6.50,
+                price: 12000,
                 image: "https://cakemehometonight.com/wp-content/uploads/2020/08/Confetti-Cupcakes-19.jpg",
-                alt: "Cupcake de vainilla",
+                alt: "Cupcake de arcoiris",
                 category: "Cupcakes"
             },
             {
                 id: 6,
                 name: "Torta de Zanahoria",
                 description: "Deliciosa torta de zanahoria con nueces y crema.",
-                price: 37.90,
-                image: "https://picsum.photos/400/300?random=7",
+                price: 37000,
+                image: "https://veggiefestchicago.org/wp-content/uploads/2021/04/21-carrot-cake.jpg",
                 alt: "Torta de zanahoria",
                 category: "Tortas"
             },
@@ -192,8 +336,8 @@ $cantidadCarrito = count($_SESSION['carrito']);
                 id: 7,
                 name: "Brownie Especial",
                 description: "Brownie húmedo con trozos de chocolate.",
-                price: 8.99,
-                image: "https://picsum.photos/400/300?random=8",
+                price: 8000,
+                image: "https://images.cookforyourlife.org/wp-content/uploads/2020/06/Dark-Chocolate-Brownies-shutterstock_112430981.jpg",
                 alt: "Brownie",
                 category: "Postres"
             },
@@ -201,8 +345,8 @@ $cantidadCarrito = count($_SESSION['carrito']);
                 id: 8,
                 name: "Cupcake de Chocolate",
                 description: "Cupcake de chocolate con cobertura cremosa.",
-                price: 7.20,
-                image: "https://picsum.photos/400/300?random=9",
+                price: 10000,
+                image: "https://carorocco.com/wp-content/uploads/2021/09/Cupcakes-de-Chocolate-y-Cereza-IMAGEN-DESTACADA.jpg",
                 alt: "Cupcake de chocolate",
                 category: "Cupcakes"
             }
@@ -214,24 +358,53 @@ $cantidadCarrito = count($_SESSION['carrito']);
 
         function renderCatalog(products) {
             catalogGrid.innerHTML = products.map(product => `
-                <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 transform hover:-translate-y-2">
-                    <img src="${product.image}" alt="${product.alt}" class="w-full h-56 object-cover">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-display font-bold text-pastel-brown">${product.name}</h3>
-                            <span class="bg-pastel-purple text-pastel-brown text-xs px-3 py-1 rounded-full font-semibold">
-                                ${product.category}
-                            </span>
-                        </div>
-                        <p class="text-gray-600 mb-4 text-sm">${product.description}</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg font-bold text-primary">$${product.price.toFixed(2)}</span>
-                            <button class="bg-pastel-brown hover:bg-secondary text-white px-4 py-2 rounded-full transition duration-300">
-                                Agregar
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-xl transition duration-300 transform hover:-translate-y-2 flex flex-col h-full">
+
+    <img src="${product.image}" alt="${product.alt}" class="w-full h-56 object-cover">
+
+    <div class="p-5 flex flex-col flex-grow">
+
+        <div class="flex justify-between items-start mb-3">
+            <h3 class="text-xl font-display font-bold text-pastel-brown min-h-[48px]">
+                ${product.name}
+            </h3>
+
+            <span class="bg-pastel-purple text-pastel-brown text-xs px-3 py-1 rounded-full font-semibold">
+                ${product.category}
+            </span>
+        </div>
+
+        <p class="text-gray-600 mb-4 text-sm min-h-[32px]">
+            ${product.description}
+        </p>
+
+        <div class="flex justify-between items-center mt-auto">
+
+            <span class="text-lg font-bold text-primary">
+                $${product.price.toFixed(2)}
+            </span>
+
+           <button onclick="${
+             product.category === 'Tortas'
+               ? `openProductModal(${product.id})`
+              : `addToCart(${product.id})`
+              }"
+
+             class="bg-pastel-brown hover:bg-secondary text-white px-4 py-2 rounded-full transition duration-300">
+
+                ${
+                 product.category === 'Tortas'
+              ? 'Personalizar'
+              : 'Agregar'
+                }
+
+</button>
+        </div>
+
+    </div>
+    
+
+</div>
             `).join("");
         }
 
@@ -257,6 +430,55 @@ $cantidadCarrito = count($_SESSION['carrito']);
         categoryFilter.addEventListener("change", filterProducts);
 
         renderCatalog(catalogoData);
+        // Abrir modal
+function openProductModal(productId) {
+
+    const product = catalogoData.find(p => p.id === productId);
+
+    if (!product) return;
+
+    document.getElementById("modalImage").src = product.image;
+    document.getElementById("modalName").textContent = product.name;
+    document.getElementById("modalDescription").textContent = product.description;
+    document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
+
+    document.getElementById("productModal").dataset.productId = product.id;
+
+    document.getElementById("productModal").classList.remove("hidden");
+    document.getElementById("productModal").classList.add("flex");
+}
+
+
+// Cerrar modal
+function closeProductModal() {
+
+    document.getElementById("productModal").classList.add("hidden");
+    document.getElementById("productModal").classList.remove("flex");
+
+}
+function addConfiguredProduct() {
+
+    const productId = parseInt(
+        document.getElementById("productModal").dataset.productId
+    );
+
+    const size = document.getElementById("cakeSize").value;
+    const fill = document.getElementById("cakeFill").value;
+    const extra = document.getElementById("extraDescription").value;
+
+    const product = catalogoData.find(p => p.id === productId);
+
+    if (!product) return;
+
+    alert(
+        `Producto agregado:\n\n` +
+        `Tamaño: ${size}\n` +
+        `Relleno: ${fill}\n` +
+        `Extra: ${extra}`
+    );
+
+    closeProductModal();
+}
     </script>
 </body>
 </html>
