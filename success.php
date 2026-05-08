@@ -11,11 +11,11 @@
 
 </head>
 
-<body class="bg-green-50 min-h-screen flex items-center justify-center">
+<body class="bg-green-50 min-h-screen flex items-center justify-center px-4 py-8">
 
-    <div class="bg-white shadow-2xl rounded-[35px] p-12 text-center">
+    <div class="bg-white shadow-2xl rounded-3xl p-6 sm:p-12 text-center w-full max-w-lg">
 
-        <h1 class="text-5xl font-bold text-green-600 mb-6">
+        <h1 class="text-3xl sm:text-5xl font-bold text-green-600 mb-6">
             ✅ Pago exitoso
         </h1>
 
@@ -24,7 +24,7 @@
         </p>
 
         <a href="index.php"
-        class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-bold">
+        class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-4 rounded-full font-bold">
 
             Volver al inicio
 

@@ -1,25 +1,38 @@
 <?php
 session_start();
-include("conexion.php");
+require_once "conexion.php";
 
-$correo = $_POST['correo'];
-$contrasena = $_POST['contrasena'];
+$correo = trim($_POST['correo'] ?? '');
+$contrasena = $_POST['contrasena'] ?? ($_POST['password'] ?? '');
 
-$sql = "SELECT * FROM usuarios WHERE correo='$correo' AND contrasena='$contrasena'";
-
-$resultado = $conexion->query($sql);
-
-if($resultado->num_rows > 0){
-
-    $usuario = $resultado->fetch_assoc();
-    $_SESSION['usuario'] = $usuario['nombre'];
-
-    header("Location: index.php");
-
-}else{
-
-    echo "Correo o contraseña incorrectos";
-
+if ($correo === '' || $contrasena === '') {
+    echo "Correo o contrasena incorrectos";
+    exit();
 }
 
+$stmt = $conexion->prepare(
+    "SELECT nombre, correo, password FROM usuarios WHERE correo = ? LIMIT 1"
+);
+
+if (!$stmt) {
+    die("Error preparando la consulta: " . $conexion->error);
+}
+
+$stmt->bind_param("s", $correo);
+$stmt->execute();
+$resultado = $stmt->get_result();
+$usuario = $resultado->fetch_assoc();
+
+if ($usuario && password_verify($contrasena, $usuario['password'])) {
+    $_SESSION['usuario'] = $usuario['nombre'];
+    $_SESSION['correo'] = $usuario['correo'];
+
+    header("Location: index.php");
+    exit();
+}
+
+echo "Correo o contrasena incorrectos";
+
+$stmt->close();
+$conexion->close();
 ?>

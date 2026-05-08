@@ -1,4 +1,4 @@
-<<?php session_start(); ?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -14,7 +14,7 @@
 
     <!-- FontAwesome -->
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
@@ -39,7 +39,7 @@
     <!-- HEADER -->
     <header class="bg-white shadow-md sticky top-0 z-50">
 
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-4">
 
             <!-- Logo -->
             <a href="index.php" class="flex items-center gap-4">
@@ -85,23 +85,50 @@
 
             </nav>
 
+            <div class="flex items-center gap-4">
+                <?php if(isset($_SESSION['usuario'])): ?>
+                    <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
+                        <i class="fas fa-user text-lg"></i>
+                        <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </a>
+                <?php else: ?>
+                    <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
+                        <i class="fas fa-user text-lg"></i>
+                        <span class="ml-1">Mi cuenta</span>
+                    </a>
+                <?php endif; ?>
+
+                <a href="Catalogocompleto.php#cart"
+                   class="relative bg-[#ffcce6] hover:bg-pink-300 transition-colors rounded-full p-3">
+                    <i class="fas fa-shopping-cart text-xl text-[#8b4513]"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </a>
+            </div>
+
+            <nav class="flex w-full justify-center gap-6 text-sm text-gray-700 md:hidden">
+                <a href="index.php" class="hover:text-orange-500 transition">Inicio</a>
+                <a href="Catalogocompleto.php" class="hover:text-orange-500 transition">Cat&aacute;logo</a>
+                <a href="nosotros.php" class="hover:text-orange-500 transition">Nosotros</a>
+                <a href="contacto.php" class="text-orange-500 font-semibold">Contacto</a>
+            </nav>
+
         </div>
 
     </header>
 
     <!-- CONTACTO -->
-    <section class="py-24 overflow-hidden">
+    <section class="py-12 md:py-24 overflow-hidden">
 
-        <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
 
             <!-- Encabezado -->
-            <div class="text-center mb-20">
+            <div class="text-center mb-12 md:mb-20">
 
                 <span class="bg-pink-200 text-amber-900 px-6 py-2 rounded-full font-semibold shadow-md">
                     Información de contacto
                 </span>
 
-                <h2 class="mt-6 text-5xl md:text-6xl font-bold font-display text-amber-900">
+                <h2 class="mt-6 text-3xl sm:text-4xl md:text-6xl font-bold font-display text-amber-900">
                     Contáctanos 🍰
                 </h2>
 
@@ -116,7 +143,7 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
 
                 <!-- Dirección -->
-                <div class="bg-white rounded-[35px] shadow-2xl p-10 text-center hover:-translate-y-3 transition duration-300">
+                <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center hover:-translate-y-3 transition duration-300">
 
                     <div class="w-20 h-20 mx-auto rounded-full bg-pink-200 flex items-center justify-center mb-6">
 
@@ -136,7 +163,7 @@
                 </div>
 
                 <!-- Teléfono -->
-                <div class="bg-white rounded-[35px] shadow-2xl p-10 text-center hover:-translate-y-3 transition duration-300">
+                <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center hover:-translate-y-3 transition duration-300">
 
                     <div class="w-20 h-20 mx-auto rounded-full bg-yellow-200 flex items-center justify-center mb-6">
 
@@ -155,7 +182,7 @@
                 </div>
 
                 <!-- Correo -->
-                <div class="bg-white rounded-[35px] shadow-2xl p-10 text-center hover:-translate-y-3 transition duration-300">
+                <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center hover:-translate-y-3 transition duration-300">
 
                     <div class="w-20 h-20 mx-auto rounded-full bg-pink-200 flex items-center justify-center mb-6">
 
@@ -174,7 +201,7 @@
                 </div>
 
                 <!-- Horarios -->
-                <div class="bg-white rounded-[35px] shadow-2xl p-10 text-center hover:-translate-y-3 transition duration-300">
+                <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 text-center hover:-translate-y-3 transition duration-300">
 
                     <div class="w-20 h-20 mx-auto rounded-full bg-yellow-200 flex items-center justify-center mb-6">
 
@@ -202,12 +229,12 @@
                     Síguenos en redes sociales
                 </h3>
 
-                <div class="flex justify-center gap-8">
+                <div class="flex flex-wrap justify-center gap-5 sm:gap-8">
 
                     <!-- Facebook -->
                     <a href="https://www.facebook.com/p/Kondorito-postres-pasteles-100063476113980/?locale=es_LA"
                     target="_blank"
-                    class="w-20 h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-2xl sm:text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
 
                         <i class="fab fa-facebook-f"></i>
 
@@ -216,7 +243,7 @@
                     <!-- Instagram -->
                     <a href="https://www.instagram.com/kondoritopostresypasteles/"
                     target="_blank"
-                    class="w-20 h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-2xl sm:text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
 
                         <i class="fab fa-instagram"></i>
 
@@ -225,7 +252,7 @@
                     <!-- WhatsApp -->
                     <a href="https://wa.me/573155321183"
                     target="_blank"
-                    class="w-20 h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white shadow-xl flex items-center justify-center text-2xl sm:text-3xl text-amber-900 hover:bg-pink-200 hover:scale-110 transition duration-300">
 
                         <i class="fab fa-whatsapp"></i>
 

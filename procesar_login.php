@@ -1,44 +1,38 @@
 <?php
 session_start();
+require_once "conexion.php";
 
-// Conexión a la base de datos
-$conn = new mysqli("localhost", "root", "", "pasteleria");
+$correo = trim($_POST['correo'] ?? '');
+$password = $_POST['password'] ?? '';
 
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
+if ($correo === '' || $password === '') {
+    echo "<h3>Correo y contrasena son obligatorios</h3>";
+    exit();
 }
 
-// Recibir datos del formulario
-$correo = $_POST['correo'];
-$password = $_POST['password'];
+$stmt = $conexion->prepare(
+    "SELECT nombre, correo, password FROM usuarios WHERE correo = ? LIMIT 1"
+);
 
-// Consulta
-$sql = "SELECT * FROM usuarios WHERE correo='$correo'";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-
-    $usuario = $result->fetch_assoc();
-
-    // Verificar contraseña encriptada
-    if (password_verify($password, $usuario['password'])) {
-
-        // Crear sesión
-        $_SESSION['usuario'] = $usuario['nombre'];
-        $_SESSION['correo'] = $usuario['correo'];
-
-        // Redirigir al inicio
-        header("Location: index.php");
-        exit();
-
-    } else {
-        echo "<h3>❌ Contraseña incorrecta</h3>";
-    }
-
-} else {
-    echo "<h3>❌ Usuario no encontrado</h3>";
+if (!$stmt) {
+    die("Error preparando la consulta: " . $conexion->error);
 }
 
-$conn->close();
+$stmt->bind_param("s", $correo);
+$stmt->execute();
+$result = $stmt->get_result();
+$usuario = $result->fetch_assoc();
+
+if ($usuario && password_verify($password, $usuario['password'])) {
+    $_SESSION['usuario'] = $usuario['nombre'];
+    $_SESSION['correo'] = $usuario['correo'];
+
+    header("Location: index.php");
+    exit();
+}
+
+echo "<h3>Correo o contrasena incorrectos</h3>";
+
+$stmt->close();
+$conexion->close();
 ?>

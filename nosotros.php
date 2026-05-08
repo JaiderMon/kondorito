@@ -14,7 +14,7 @@
 
     <!-- FontAwesome -->
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <!-- Fuente -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
@@ -39,7 +39,7 @@
     <!-- HEADER -->
     <header class="bg-white shadow-md sticky top-0 z-50">
 
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-4">
 
             <!-- Logo -->
             <a href="index.php" class="flex items-center gap-4">
@@ -85,17 +85,44 @@
 
             </nav>
 
+            <div class="flex items-center gap-4">
+                <?php if(isset($_SESSION['usuario'])): ?>
+                    <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
+                        <i class="fas fa-user text-lg"></i>
+                        <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </a>
+                <?php else: ?>
+                    <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
+                        <i class="fas fa-user text-lg"></i>
+                        <span class="ml-1">Mi cuenta</span>
+                    </a>
+                <?php endif; ?>
+
+                <a href="Catalogocompleto.php#cart"
+                   class="relative bg-[#ffcce6] hover:bg-pink-300 transition-colors rounded-full p-3">
+                    <i class="fas fa-shopping-cart text-xl text-[#8b4513]"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </a>
+            </div>
+
+            <nav class="flex w-full justify-center gap-6 text-sm text-gray-700 md:hidden">
+                <a href="index.php" class="hover:text-orange-500 transition">Inicio</a>
+                <a href="Catalogocompleto.php" class="hover:text-orange-500 transition">Cat&aacute;logo</a>
+                <a href="nosotros.php" class="text-orange-500 font-semibold">Nosotros</a>
+                <a href="contacto.php" class="hover:text-orange-500 transition">Contacto</a>
+            </nav>
+
         </div>
 
     </header>
 
 
     <!-- ================= NOSOTROS ================= -->
-    <section class="py-24 overflow-hidden">
+    <section class="py-12 md:py-24 overflow-hidden">
 
-        <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
 
-            <div class="grid lg:grid-cols-2 gap-20 items-center">
+            <div class="grid lg:grid-cols-2 gap-10 lg:gap-20 items-center">
 
                 <!-- Imagen -->
                 <div class="relative">
@@ -107,7 +134,7 @@
                     <img
                         src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop"
                         alt="Pastelería Kondorito"
-                        class="relative w-full h-[600px] object-cover rounded-[40px] shadow-2xl border-8 border-white">
+                        class="relative w-full h-72 sm:h-96 lg:h-[600px] object-cover rounded-3xl lg:rounded-[40px] shadow-2xl border-4 sm:border-8 border-white">
 
                 </div>
 
@@ -118,7 +145,7 @@
                         Nuestra historia
                     </span>
 
-                    <h2 class="mt-6 text-5xl md:text-6xl font-bold font-display text-amber-900 leading-tight">
+                    <h2 class="mt-6 text-3xl sm:text-4xl md:text-6xl font-bold font-display text-amber-900 leading-tight">
 
                         Endulzamos
                         <span class="text-orange-500">
@@ -143,9 +170,9 @@
                     </p>
 
                     <!-- Cards -->
-                    <div class="grid sm:grid-cols-3 gap-6 mt-12">
+                    <div class="grid sm:grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-12">
 
-                        <div class="bg-white rounded-3xl shadow-xl p-8 text-center hover:-translate-y-2 transition">
+                        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 text-center hover:-translate-y-2 transition">
 
                             <div class="w-16 h-16 mx-auto rounded-full bg-pink-200 flex items-center justify-center mb-5">
 
@@ -163,7 +190,7 @@
 
                         </div>
 
-                        <div class="bg-white rounded-3xl shadow-xl p-8 text-center hover:-translate-y-2 transition">
+                        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 text-center hover:-translate-y-2 transition">
 
                             <div class="w-16 h-16 mx-auto rounded-full bg-yellow-200 flex items-center justify-center mb-5">
 
@@ -181,7 +208,7 @@
 
                         </div>
 
-                        <div class="bg-white rounded-3xl shadow-xl p-8 text-center hover:-translate-y-2 transition">
+                        <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 text-center hover:-translate-y-2 transition">
 
                             <div class="w-16 h-16 mx-auto rounded-full bg-pink-200 flex items-center justify-center mb-5">
 

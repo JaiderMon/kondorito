@@ -26,6 +26,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
     <title>Catálogo Completo | Kondorito</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -65,47 +66,60 @@ $cantidadCarrito = count($_SESSION['carrito']);
     <header class="sticky top-0 z-50 bg-white shadow-md">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4 flex-wrap gap-4">
-                
-                <!-- Logo -->
-                <div class="flex items-center">
+
+                <a href="index.php" class="flex items-center">
                     <div class="w-12 h-12 rounded-full bg-pastel-yellow flex items-center justify-center mr-3">
-                        <span class="text-2xl">🎂</span>
+                        <i class="fas fa-birthday-cake text-2xl text-pastel-brown"></i>
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold font-display text-pastel-brown">Kondorito</h1>
                         <p class="text-sm text-gray-600">Postres y Pasteles</p>
                     </div>
-                </div>
-                <!-- Carrito -->
-                <a href="#cart"
-                 id="cart-btn"
-                 class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
-
-                 <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
-
-                 <span id="cart-count"
-                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-
-                  0
-
-                </span>
-
-</a>
-
-                <!-- Botón volver -->
-                <a href="index.php"
-                   class="bg-pastel-brown hover:bg-secondary text-white px-5 py-2 rounded-full font-semibold transition duration-300 shadow">
-                    Volver al inicio
                 </a>
+
+                <nav class="hidden lg:flex items-center gap-8 text-gray-700">
+                    <a href="index.php" class="hover:text-primary transition">Inicio</a>
+                    <a href="Catalogocompleto.php" class="text-primary font-semibold">Cat&aacute;logo</a>
+                    <a href="nosotros.php" class="hover:text-primary transition">Nosotros</a>
+                    <a href="contacto.php" class="hover:text-primary transition">Contacto</a>
+                </nav>
+
+                <div class="flex items-center gap-4">
+                    <?php if(isset($_SESSION['usuario'])): ?>
+                        <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        </a>
+                    <?php else: ?>
+                        <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1">Mi cuenta</span>
+                        </a>
+                    <?php endif; ?>
+
+                    <a href="#cart"
+                     id="cart-btn"
+                     class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
+                        <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
+                        <span id="cart-count"
+                          class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+                </div>
+
+                <nav class="flex w-full flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-700 lg:hidden">
+                    <a href="index.php" class="hover:text-primary transition">Inicio</a>
+                    <a href="Catalogocompleto.php" class="text-primary font-semibold">Cat&aacute;logo</a>
+                    <a href="nosotros.php" class="hover:text-primary transition">Nosotros</a>
+                    <a href="contacto.php" class="hover:text-primary transition">Contacto</a>
+                </nav>
             </div>
         </div>
     </header>
-
     <!-- Hero -->
-    <section class="bg-gradient-to-r from-pastel-pink via-pastel-cream to-pastel-yellow py-16">
+    <section class="bg-gradient-to-r from-pastel-pink via-pastel-cream to-pastel-yellow py-12 md:py-16">
         <div class="container mx-auto px-4 text-center">
             <div class="floating inline-block mb-4 text-5xl">🍰</div>
-            <h2 class="text-4xl md:text-5xl font-display font-bold text-pastel-brown mb-4">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-pastel-brown mb-4">
                 Catálogo Completo
             </h2>
             <p class="text-lg text-gray-700 max-w-2xl mx-auto">
@@ -117,7 +131,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
     <!-- Filtros -->
     <section class="py-8">
         <div class="container mx-auto px-4">
-            <div class="bg-white rounded-3xl shadow-md p-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+            <div class="bg-white rounded-3xl shadow-md p-4 sm:p-6 flex flex-col md:flex-row gap-4 justify-between items-center">
                 <input
                     type="text"
                     id="searchInput"
@@ -150,7 +164,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
 <div id="productModal"
 class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
 
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-8 relative max-h-[90vh] overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-5 sm:p-8 relative max-h-[90vh] overflow-y-auto">
 
         <button onclick="closeProductModal()"
             class="absolute top-4 right-4 text-3xl text-gray-500 hover:text-red-500">

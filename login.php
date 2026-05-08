@@ -12,10 +12,10 @@
 
 </head>
 
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-yellow-100 via-pink-200 to-pink-300">
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-r from-yellow-100 via-pink-200 to-pink-300 px-4 py-8">
 
     <!-- Contenedor -->
-    <div class="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-2xl w-96 border border-white/40">
+    <div class="bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-white/40">
 
         <!-- Icono -->
         <div class="flex justify-center mb-4">

@@ -52,10 +52,10 @@ session_start();
 <body class="min-h-screen bg-pastel-cream font-body text-gray-800">
     <!-- Header -->
     <header class="sticky top-0 z-50 bg-white shadow-md">
-        <div class="container mx-auto px-2">
-            <div class="flex items-center justify-between py-4">
-                <!-- Logo -->
-                <div class="flex items-center">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4 flex-wrap gap-4">
+
+                <a href="index.php" class="flex items-center">
                     <div class="w-12 h-12 rounded-full bg-pastel-yellow flex items-center justify-center mr-3">
                         <i class="fas fa-birthday-cake text-2xl text-pastel-brown"></i>
                     </div>
@@ -63,83 +63,67 @@ session_start();
                         <h1 class="text-2xl font-bold font-display text-pastel-brown">Kondorito</h1>
                         <p class="text-sm text-gray-600">Postres y Pasteles</p>
                     </div>
-                </div>
+                </a>
 
-                <!-- Desktop Navigation -->
-                <nav class="hidden md:block ml-20">
-                    <ul id="main-nav" class="flex space-x-8"></ul>
+                <nav class="hidden lg:flex items-center text-gray-700">
+                    <ul id="main-nav" class="flex gap-6"></ul>
                 </nav>
 
-                <!-- Cart and User -->
-               <div class="flex items-center ">
-    <div class="hidden md:block mr-20">
+                <div class="flex items-center gap-4">
+                    <?php if(isset($_SESSION['usuario'])): ?>
+                        <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        </a>
+                    <?php else: ?>
+                        <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1">Mi cuenta</span>
+                        </a>
+                    <?php endif; ?>
 
-
-        <?php if(isset($_SESSION['usuario'])): ?>
-            <a href="perfil.php" class="text-gray-700 hover:text-primary">
-                <i class="fas fa-user text-lg"></i>
-                <span class="ml-1">Hola, <?php echo $_SESSION['usuario'];?></span>
-            </a>
-        <?php else: ?>
-            <a href="login.php" class="text-gray-700 hover:text-primary">
-                <i class="fas fa-user text-lg"></i>
-                <span class="ml-1">Mi cuenta</span>
-            </a>
-        <?php endif; ?>
-                   <a href="javascript:void(0)"
+                    <a href="javascript:void(0)"
                        id="cart-btn"
-                      onclick="openCart()"
+                       onclick="openCart()"
                        class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
                         <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
                         <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
-    </div>
-</div>
-                   
-                    
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-btn" class="md:hidden text-2xl text-pastel-brown">
-                        <i class="fas fa-bars"></i>
-                    </button>
                 </div>
-            </div>
 
-            <!-- Mobile Navigation -->
-            <nav id="mobile-nav" class="hidden md:hidden bg-white border-t py-4">
-                <ul id="mobile-nav-list" class="space-y-3"></ul>
-                <div class="mt-4 pt-4 border-t">
-                    <a href="#" class="block py-2 text-gray-700 hover:text-primary">
-                        <i class="fas fa-user mr-2"></i> Mi cuenta
-                    </a>
-                </div>
-            </nav>
+                <nav class="flex w-full flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-700 lg:hidden">
+                    <a href="index.php" class="text-primary font-semibold">Inicio</a>
+                    <a href="Catalogocompleto.php" class="hover:text-primary transition">Cat&aacute;logo</a>
+                    <a href="nosotros.php" class="hover:text-primary transition">Nosotros</a>
+                    <a href="contacto.php" class="hover:text-primary transition">Contacto</a>
+                </nav>
+            </div>
         </div>
     </header>
-
     <!-- Hero Section -->
     <section class="relative bg-gradient-to-r from-pastel-yellow to-pastel-pink overflow-hidden">
-        <div class="container mx-auto px-4 py-16 md:py-24">
+        <div class="container mx-auto px-4 py-12 md:py-20">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-pastel-brown mb-6">
+                    <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-display text-pastel-brown mb-6">
                         Delicias que <span class="text-primary">endulzan</span> tu vida
                     </h2>
                     <p class="text-lg md:text-xl text-gray-700 mb-8">
                         Pastelería artesanal con los ingredientes más frescos y el sabor más auténtico. 
                         Tortas personalizadas para cada ocasión especial.
                     </p>
-                    <div class="flex flex-wrap gap-4">
-                       <a href="Catalogocompleto.php" target="_blank" class="bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all transform hover:-translate-y-1">
+                    <div class="flex flex-col sm:flex-row flex-wrap gap-4">
+                       <a href="Catalogocompleto.php" class="text-center bg-primary hover:bg-secondary text-white font-semibold py-3 px-8 rounded-full shadow-lg transition-all transform hover:-translate-y-1">
                          Ver catálogo completo
                         </a>
-                        <a href="#order" class="bg-white hover:bg-gray-100 text-primary font-semibold py-3 px-8 rounded-full border-2 border-primary transition-all">
+                        <a href="#order" class="text-center bg-white hover:bg-gray-100 text-primary font-semibold py-3 px-8 rounded-full border-2 border-primary transition-all">
                             Realizar pedido
                         </a>
                     </div>
                 </div>
-                <div class="relative">
-                     <div class="w-64 h-64 rounded-full bg-pastel-yellow flex items-center justify-center ml-60">
-                        <i class="fas fa-birthday-cake text-9xl text-pastel-brown"></i>
+                <div class="relative flex justify-center md:justify-end">
+                     <div class="w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-full bg-pastel-yellow flex items-center justify-center">
+                        <i class="fas fa-birthday-cake text-7xl sm:text-8xl md:text-9xl text-pastel-brown"></i>
                     </div>
                   
                 </div>
@@ -834,26 +818,12 @@ function addConfiguredProduct() {
         document.addEventListener('DOMContentLoaded', function() {
             // Render all content
             document.getElementById('main-nav').innerHTML = renderNavigation(navigationData);
-            document.getElementById('mobile-nav-list').innerHTML = renderMobileNavigation(navigationData);
             document.getElementById('featured-products').innerHTML = renderFeaturedProducts(featuredProductsData);
             document.getElementById('order-steps').innerHTML = renderOrderSteps(orderStepsData);
             document.getElementById('product-categories').innerHTML = renderCategories(categoriesData);
             document.getElementById('testimonials').innerHTML = renderTestimonials(testimonialsData);
             document.getElementById('footer-links').innerHTML = renderFooterLinks(footerLinksData);
             document.getElementById('footer-categories').innerHTML = renderFooterLinks(footerCategoriesData);
-
-            // Mobile Menu Toggle
-            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
-                const mobileNav = document.getElementById('mobile-nav');
-                const icon = this.querySelector('i');
-                
-                mobileNav.classList.toggle('hidden');
-                if (mobileNav.classList.contains('hidden')) {
-                    icon.className = 'fas fa-bars';
-                } else {
-                    icon.className = 'fas fa-times';
-                }
-            });
 
             // Cart Modal Toggle
             document.getElementById('cart-btn').addEventListener('click', function(e) {
@@ -890,25 +860,6 @@ function addConfiguredProduct() {
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     
-                    // Close mobile menu if open
-                    const mobileNav = document.getElementById('mobile-nav');
-                    if (!mobileNav.classList.contains('hidden')) {
-                        mobileNav.classList.add('hidden');
-                        document.querySelector('#mobile-menu-btn i').className = 'fas fa-bars';
-                    }
-                }
-            });
-
-            // Close mobile menu when clicking outside
-            document.addEventListener('click', function(e) {
-                const mobileNav = document.getElementById('mobile-nav');
-                const menuBtn = document.getElementById('mobile-menu-btn');
-                
-                if (!mobileNav.classList.contains('hidden') && 
-                    !mobileNav.contains(e.target) && 
-                    !menuBtn.contains(e.target)) {
-                    mobileNav.classList.add('hidden');
-                    menuBtn.querySelector('i').className = 'fas fa-bars';
                 }
             });
         });
