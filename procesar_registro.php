@@ -7,17 +7,17 @@ $password = $_POST['password'] ?? '';
 $confirmar = $_POST['confirmar'] ?? '';
 
 if ($nombre === '' || $correo === '' || $password === '' || $confirmar === '') {
-    echo "Todos los campos son obligatorios";
+    header("Location: registro.php?error=" . urlencode("Todos los campos son obligatorios"));
     exit();
 }
 
 if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) {
-    echo "Correo invalido";
+    header("Location: registro.php?error=" . urlencode("Correo invalido"));
     exit();
 }
 
 if ($password !== $confirmar) {
-    echo "Las contrasenas no coinciden";
+    header("Location: registro.php?error=" . urlencode("Las contrasenas no coinciden"));
     exit();
 }
 
@@ -25,7 +25,7 @@ $stmt = $pdo->prepare("SELECT correo FROM usuarios WHERE correo = :correo LIMIT 
 $stmt->execute(['correo' => $correo]);
 
 if ($stmt->fetch()) {
-    echo "Este correo ya esta registrado";
+    header("Location: registro.php?error=" . urlencode("Este correo ya esta registrado"));
     exit();
 }
 
