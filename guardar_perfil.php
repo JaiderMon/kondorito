@@ -19,18 +19,18 @@ if (!in_array($ciudad, $ciudadesPermitidas, true)) {
     exit();
 }
 
-$stmt = $conexion->prepare(
-    "UPDATE usuarios SET direccion = ?, ciudad = ?, telefono = ? WHERE correo = ?"
+$stmt = $pdo->prepare(
+    "UPDATE usuarios
+     SET direccion = :direccion, ciudad = :ciudad, telefono = :telefono
+     WHERE correo = :correo"
 );
 
-if (!$stmt) {
-    die("Error preparando la consulta: " . $conexion->error);
-}
-
-$stmt->bind_param("ssss", $direccion, $ciudad, $telefono, $correo);
-$stmt->execute();
-$stmt->close();
-$conexion->close();
+$stmt->execute([
+    'direccion' => $direccion,
+    'ciudad' => $ciudad,
+    'telefono' => $telefono,
+    'correo' => $correo,
+]);
 
 header("Location: index.php");
 exit();

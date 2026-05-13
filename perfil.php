@@ -8,21 +8,11 @@ if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
 }
 
 $correo = $_SESSION['correo'];
-$stmt = $conexion->prepare(
-    "SELECT nombre, correo, direccion, ciudad, telefono FROM usuarios WHERE correo = ? LIMIT 1"
+$stmt = $pdo->prepare(
+    "SELECT nombre, correo, direccion, ciudad, telefono FROM usuarios WHERE correo = :correo LIMIT 1"
 );
-
-if (!$stmt) {
-    die("Error preparando la consulta: " . $conexion->error);
-}
-
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$result = $stmt->get_result();
-$usuario = $result->fetch_assoc();
-
-$stmt->close();
-$conexion->close();
+$stmt->execute(['correo' => $correo]);
+$usuario = $stmt->fetch();
 
 if (!$usuario) {
     session_destroy();

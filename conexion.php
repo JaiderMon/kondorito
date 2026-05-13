@@ -1,16 +1,27 @@
 <?php
 
-$host = "localhost";
-$usuario = "root";
-$password = "";
-$base_datos = "pasteleria";
+require_once __DIR__ . "/cargar_env.php";
 
-$conexion = new mysqli($host, $usuario, $password, $base_datos);
+$host = getenv('DB_HOST') ?: 'aws-1-us-east-1.pooler.supabase.com';
+$port = getenv('DB_PORT') ?: '5432';
+$dbname = getenv('DB_NAME') ?: 'postgres';
+$user = getenv('DB_USER') ?: 'postgres.udzurkobychnrjqtffle';
+$password = getenv('DB_PASSWORD') ?: '';
 
-if ($conexion->connect_error) {
-    die("Error de conexión: " . $conexion->connect_error);
+if ($password === '') {
+    die('Falta configurar la variable de entorno DB_PASSWORD.');
 }
 
-$conexion->set_charset("utf8mb4");
+$dsn = "pgsql:host={$host};port={$port};dbname={$dbname};sslmode=require";
+
+try {
+    $pdo = new PDO($dsn, $user, $password, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ]);
+} catch (PDOException $e) {
+    die('Error de conexion a la base de datos: ' . $e->getMessage());
+}
 
 ?>

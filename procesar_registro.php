@@ -21,44 +21,26 @@ if ($password !== $confirmar) {
     exit();
 }
 
-$stmt = $conexion->prepare("SELECT correo FROM usuarios WHERE correo = ? LIMIT 1");
+$stmt = $pdo->prepare("SELECT correo FROM usuarios WHERE correo = :correo LIMIT 1");
+$stmt->execute(['correo' => $correo]);
 
-if (!$stmt) {
-    die("Error preparando la consulta: " . $conexion->error);
-}
-
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
+if ($stmt->fetch()) {
     echo "Este correo ya esta registrado";
-    $stmt->close();
-    $conexion->close();
     exit();
 }
-
-$stmt->close();
 
 $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-$stmt = $conexion->prepare(
-    "INSERT INTO usuarios (nombre, correo, password) VALUES (?, ?, ?)"
+$stmt = $pdo->prepare(
+    "INSERT INTO usuarios (nombre, correo, password) VALUES (:nombre, :correo, :password)"
 );
 
-if (!$stmt) {
-    die("Error preparando la consulta: " . $conexion->error);
-}
+$stmt->execute([
+    'nombre' => $nombre,
+    'correo' => $correo,
+    'password' => $password_hash,
+]);
 
-$stmt->bind_param("sss", $nombre, $correo, $password_hash);
-
-if ($stmt->execute()) {
-    header("Location: login.php");
-    exit();
-}
-
-echo "Error: " . $stmt->error;
-
-$stmt->close();
-$conexion->close();
+header("Location: login.php");
+exit();
 ?>

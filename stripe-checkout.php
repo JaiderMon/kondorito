@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/cargar_env.php';
 require 'vendor/autoload.php';
 
 // Use an environment variable for the Stripe key instead of storing it in source control.
@@ -33,7 +34,7 @@ foreach ($cart as $item) {
 
 }
 
-$YOUR_DOMAIN = 'http://localhost/kondorito';
+$YOUR_DOMAIN = rtrim(getenv('APP_URL') ?: 'http://localhost/kondorito', '/');
 
 $checkout_session = \Stripe\Checkout\Session::create([
 

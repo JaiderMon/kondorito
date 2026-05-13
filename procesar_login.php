@@ -10,18 +10,11 @@ if ($correo === '' || $password === '') {
     exit();
 }
 
-$stmt = $conexion->prepare(
-    "SELECT nombre, correo, password FROM usuarios WHERE correo = ? LIMIT 1"
+$stmt = $pdo->prepare(
+    "SELECT nombre, correo, password FROM usuarios WHERE correo = :correo LIMIT 1"
 );
-
-if (!$stmt) {
-    die("Error preparando la consulta: " . $conexion->error);
-}
-
-$stmt->bind_param("s", $correo);
-$stmt->execute();
-$result = $stmt->get_result();
-$usuario = $result->fetch_assoc();
+$stmt->execute(['correo' => $correo]);
+$usuario = $stmt->fetch();
 
 if ($usuario && password_verify($password, $usuario['password'])) {
     $_SESSION['usuario'] = $usuario['nombre'];
@@ -32,7 +25,4 @@ if ($usuario && password_verify($password, $usuario['password'])) {
 }
 
 echo "<h3>Correo o contrasena incorrectos</h3>";
-
-$stmt->close();
-$conexion->close();
 ?>
