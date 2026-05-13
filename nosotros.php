@@ -11,6 +11,22 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastel-pink': '#ffcce6',
+                        'pastel-brown': '#8b4513',
+                        'pastel-cream': '#fffaf0',
+                        'pastel-yellow': '#fffacd',
+                        'primary': '#d2691e',
+                        'secondary': '#a0522d'
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- FontAwesome -->
     <link rel="stylesheet"
@@ -37,83 +53,72 @@
 <body class="bg-gradient-to-br from-orange-50 via-pink-50 to-amber-50 text-gray-800">
 
     <!-- HEADER -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4 flex-wrap gap-4">
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center flex-wrap gap-4">
+                <a href="index.php" class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-pastel-yellow flex items-center justify-center mr-3">
+                        <i class="fas fa-birthday-cake text-2xl text-pastel-brown"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold font-display text-pastel-brown">Kondorito</h1>
+                        <p class="text-sm text-gray-600">Postres y Pasteles</p>
+                    </div>
+                </a>
 
-            <!-- Logo -->
-            <a href="index.php" class="flex items-center gap-4">
+                <nav class="hidden lg:flex items-center gap-8 text-gray-700">
+                    <a href="index.php" class="hover:text-primary transition">Inicio</a>
+                    <a href="Catalogocompleto.php" class="hover:text-primary transition">Cat&aacute;logo</a>
+                    <a href="nosotros.php" class="text-primary font-semibold">Nosotros</a>
+                    <a href="contacto.php" class="hover:text-primary transition">Contacto</a>
+                </nav>
 
-                <div class="w-14 h-14 rounded-full bg-yellow-100 flex items-center justify-center">
+                <div class="flex items-center gap-4">
+                    <?php if(isset($_SESSION['usuario'])): ?>
+                        <details class="relative">
+                            <summary class="flex cursor-pointer list-none items-center text-gray-700 hover:text-primary">
+                                <i class="fas fa-user text-lg"></i>
+                                <span class="ml-1 hidden sm:inline">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </summary>
+                            <div class="absolute right-0 mt-3 w-56 rounded-2xl border border-pink-100 bg-white p-2 shadow-xl">
+                                <a href="perfil.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                    <i class="fas fa-user-cog"></i>
+                                    Configuraci&oacute;n perfil
+                                </a>
+                                <a href="mis_pedidos.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                    <i class="fas fa-receipt"></i>
+                                    Mis pedidos
+                                </a>
+                                <a href="logout.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-red-500 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cerrar sesi&oacute;n
+                                </a>
+                            </div>
+                        </details>
+                    <?php else: ?>
+                        <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                            <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1">Mi cuenta</span>
+                        </a>
+                    <?php endif; ?>
 
-                    <i class="fas fa-birthday-cake text-2xl text-amber-900"></i>
-
+                    <a href="Catalogocompleto.php#cart"
+                       class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
+                        <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
                 </div>
 
-                <div>
-
-                    <h1 class="text-3xl font-bold text-amber-900 font-display">
-                        Kondorito
-                    </h1>
-
-                    <p class="text-sm text-gray-500">
-                        Postres y Pasteles
-                    </p>
-
-                </div>
-
-            </a>
-
-            <!-- Navegación -->
-            <nav class="hidden md:flex items-center gap-8 text-gray-700">
-
-                <a href="index.php" class="hover:text-orange-500 transition">
-                    Inicio
-                </a>
-
-                <a href="Catalogocompleto.php" class="hover:text-orange-500 transition">
-                    Catálogo
-                </a>
-
-                <a href="nosotros.php" class="text-orange-500 font-semibold">
-                    Nosotros
-                </a>
-
-                <a href="contacto.php" class="hover:text-orange-500 transition">
-                    Contacto
-                </a>
-
-            </nav>
-
-            <div class="flex items-center gap-4">
-                <?php if(isset($_SESSION['usuario'])): ?>
-                    <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
-                        <i class="fas fa-user text-lg"></i>
-                        <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
-                    </a>
-                <?php else: ?>
-                    <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-orange-500">
-                        <i class="fas fa-user text-lg"></i>
-                        <span class="ml-1">Mi cuenta</span>
-                    </a>
-                <?php endif; ?>
-
-                <a href="Catalogocompleto.php#cart"
-                   class="relative bg-[#ffcce6] hover:bg-pink-300 transition-colors rounded-full p-3">
-                    <i class="fas fa-shopping-cart text-xl text-[#8b4513]"></i>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
-                </a>
+                <nav class="flex w-full flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-700 lg:hidden">
+                    <a href="index.php" class="hover:text-primary transition">Inicio</a>
+                    <a href="Catalogocompleto.php" class="hover:text-primary transition">Cat&aacute;logo</a>
+                    <a href="nosotros.php" class="text-primary font-semibold">Nosotros</a>
+                    <a href="contacto.php" class="hover:text-primary transition">Contacto</a>
+                </nav>
             </div>
-
-            <nav class="flex w-full justify-center gap-6 text-sm text-gray-700 md:hidden">
-                <a href="index.php" class="hover:text-orange-500 transition">Inicio</a>
-                <a href="Catalogocompleto.php" class="hover:text-orange-500 transition">Cat&aacute;logo</a>
-                <a href="nosotros.php" class="text-orange-500 font-semibold">Nosotros</a>
-                <a href="contacto.php" class="hover:text-orange-500 transition">Contacto</a>
-            </nav>
-
         </div>
-
     </header>
 
 

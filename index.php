@@ -71,10 +71,27 @@ session_start();
 
                 <div class="flex items-center gap-4">
                     <?php if(isset($_SESSION['usuario'])): ?>
-                        <a href="perfil.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
-                            <i class="fas fa-user text-lg"></i>
-                            <span class="ml-1">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        </a>
+                        <details class="relative">
+                            <summary class="flex cursor-pointer list-none items-center text-gray-700 hover:text-primary">
+                                <i class="fas fa-user text-lg"></i>
+                                <span class="ml-1 hidden sm:inline">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                <i class="fas fa-chevron-down ml-2 text-xs"></i>
+                            </summary>
+                            <div class="absolute right-0 mt-3 w-56 rounded-2xl border border-pink-100 bg-white p-2 shadow-xl">
+                                <a href="perfil.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                    <i class="fas fa-user-cog"></i>
+                                    Configuraci&oacute;n perfil
+                                </a>
+                                <a href="mis_pedidos.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-primary">
+                                    <i class="fas fa-receipt"></i>
+                                    Mis pedidos
+                                </a>
+                                <a href="logout.php" class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-red-500 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Cerrar sesi&oacute;n
+                                </a>
+                            </div>
+                        </details>
                     <?php else: ?>
                         <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
                             <i class="fas fa-user text-lg"></i>
