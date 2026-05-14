@@ -15,6 +15,10 @@
     <!-- FontAwesome -->
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script>
+        window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
+    </script>    
+    <script src="assets/js/cart.js" defer></script>
 
 </head>
 
@@ -74,10 +78,11 @@
                     </a>
                 <?php endif; ?>
 
-                <a href="Catalogocompleto.php#cart"
+                <a href="#cart"
+                   data-cart-button
                    class="relative bg-[#ffcce6] hover:bg-pink-300 transition-colors rounded-full p-3">
                     <i class="fas fa-shopping-cart text-xl text-[#8b4513]"></i>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    <span data-cart-count class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                 </a>
             </nav>
 
@@ -262,6 +267,7 @@
     }
 
 </script>
+<?php include 'cart_modal.php'; ?>
 </body>
 
 </html>

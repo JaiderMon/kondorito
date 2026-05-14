@@ -50,6 +50,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="assets/js/cart.js" defer></script>
 
     <style>
         @keyframes float {
@@ -116,9 +117,10 @@ $cantidadCarrito = count($_SESSION['carrito']);
 
                     <a href="#cart"
                      id="cart-btn"
+                     data-cart-button
                      class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
                         <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
-                        <span id="cart-count"
+                        <span id="cart-count" data-cart-count
                           class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
                 </div>
@@ -272,41 +274,8 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
     </div>
 
 </div>
-<!-- Cart Modal -->
-    <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-                <div class="p-6 border-b">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-2xl font-bold font-display text-pastel-brown">
-                            <i class="fas fa-shopping-cart mr-3"></i>Tu carrito
-                        </h3>
-                        <button id="close-cart" class="text-3xl text-gray-500 hover:text-gray-800">&times;</button>
-                    </div>
-                </div>
-                
-                <div class="p-6 overflow-y-auto max-h-[60vh]">
-                    <div id="cart-items" class="space-y-4"></div>
-                    <div id="empty-cart" class="text-center py-12">
-                        <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 text-lg">Tu carrito está vacío</p>
-                        <p class="text-gray-400">Agrega productos del catálogo</p>
-                    </div>
-                </div>
-                
-                <div class="p-6 border-t bg-gray-50">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-xl font-bold">Total:</span>
-                        <span id="cart-total" class="text-2xl font-bold text-primary">$0.00</span>
-                    </div>
-                    <button id="checkout-btn" class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 px-6 rounded-full transition-colors text-lg">
-                        Proceder al pago
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
+<?php include 'cart_modal.php'; ?>
+<script>
         
         const catalogoData = [
             {
@@ -386,6 +355,11 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
         const catalogGrid = document.getElementById("catalogGrid");
         const searchInput = document.getElementById("searchInput");
         const categoryFilter = document.getElementById("categoryFilter");
+        window.cartRequiresLogin = true;
+        window.cartUserLoggedIn = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
+        window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
+        window.cartCheckoutUrl = 'pago.php';
+
 
         function renderCatalog(products) {
             catalogGrid.innerHTML = products.map(product => `
@@ -461,6 +435,14 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
         categoryFilter.addEventListener("change", filterProducts);
 
         renderCatalog(catalogoData);
+
+        function addToCart(productId) {
+            const product = catalogoData.find(p => p.id === productId);
+            if (!product) return;
+
+            Cart.addItem(product);
+        }
+
         // Abrir modal
 function openProductModal(productId) {
 
@@ -501,15 +483,9 @@ function addConfiguredProduct() {
 
     if (!product) return;
 
-    alert(
-        `Producto agregado:\n\n` +
-        `Tamaño: ${size}\n` +
-        `Relleno: ${fill}\n` +
-        `Extra: ${extra}`
-    );
-
+    Cart.addItem(product, { size, fill, extra });
     closeProductModal();
-}
-    </script>
+}    </script>
 </body>
 </html>
+

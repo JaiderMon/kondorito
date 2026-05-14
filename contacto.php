@@ -35,6 +35,10 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <script>
+        window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
+    </script>    
+    <script src="assets/js/cart.js" defer></script>
 
     <style>
 
@@ -104,10 +108,11 @@
                         </a>
                     <?php endif; ?>
 
-                    <a href="Catalogocompleto.php#cart"
+                    <a href="#cart"
+                       data-cart-button
                        class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
                         <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                        <span data-cart-count class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
                 </div>
 
@@ -271,6 +276,7 @@
 
     </section>
 
+<?php include 'cart_modal.php'; ?>
 </body>
 
 </html>

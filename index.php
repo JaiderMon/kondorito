@@ -40,6 +40,7 @@ session_start();
             }
         }
     </script>
+    <script src="assets/js/cart.js" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         @keyframes float {
@@ -99,12 +100,12 @@ session_start();
                         </a>
                     <?php endif; ?>
 
-                    <a href="javascript:void(0)"
+                    <a href="#cart"
                        id="cart-btn"
-                       onclick="openCart()"
+                       data-cart-button
                        class="relative bg-pastel-pink hover:bg-pink-300 transition-colors rounded-full p-3">
                         <i class="fas fa-shopping-cart text-xl text-pastel-brown"></i>
-                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                        <span id="cart-count" data-cart-count class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                     </a>
                 </div>
 
@@ -298,52 +299,8 @@ session_start();
             </div>
         </div>
     </footer>
-
-    <!-- Cart Modal -->
-    <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto">
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-                <div class="p-6 border-b">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-2xl font-bold font-display text-pastel-brown">
-                            <i class="fas fa-shopping-cart mr-3"></i>Tu carrito
-                        </h3>
-                        <button id="close-cart"
-onclick="closeCart()"
-class="text-3xl text-gray-500 hover:text-gray-800">
-
-    &times;
-
-</button>
-                    </div>
-                </div>
-                
-                <div class="p-6 overflow-y-auto max-h-[60vh]">
-                    <div id="cart-items" class="space-y-4"></div>
-                    <div id="empty-cart" class="text-center py-12">
-                        <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                        <p class="text-gray-500 text-lg">Tu carrito está vacío</p>
-                        <p class="text-gray-400">Agrega productos del catálogo</p>
-                    </div>
-                </div>
-                
-                <div class="p-6 border-t bg-gray-50">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-xl font-bold">Total:</span>
-                        <span id="cart-total" class="text-2xl font-bold text-primary">$0.00</span>
-                    </div>
-                   <button id="checkout-btn"
-                     onclick="proceedToCheckout()"
-                      class="w-full bg-pastel-brown hover:bg-secondary text-white py-4 rounded-full font-semibold transition">
-
-                      Proceder al pago
-
-                     </button>
-                </div>
-            </div>
-        </div>
-    </div>
-     <!-- Product Modal -->
+    <?php include 'cart_modal.php'; ?>
+<!-- Product Modal -->
 <div id="productModal"
 class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-center p-4">
 
@@ -568,26 +525,12 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
             { "label": "Tortas de Bodas", "href": "#category-wedding" }
         ];
 
-        const cartData = [];
-        let cartTotal = 0;
-
         // Reusable Render Functions
         function renderNavigation(items) {
             return items.map(item => `
                 <li>
                     <a href="${item.href}" class="flex items-center text-gray-700 hover:text-primary font-medium transition-colors">
                         <i class="${item.icon} mr-2"></i>${item.label}
-                    </a>
-                </li>
-            `).join("");
-        }
-
-        function renderMobileNavigation(items) {
-            return items.map(item => `
-                <li>
-                    <a href="${item.href}" class="flex items-center py-3 px-4 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                        <i class="${item.icon} mr-3 text-lg"></i>
-                        <span class="font-medium">${item.label}</span>
                     </a>
                 </li>
             `).join("");
@@ -662,120 +605,39 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
                             <i class="${cat.icon} text-2xl text-pastel-brown"></i>
                         </div>
                         <h3 class="font-bold text-gray-800 mb-2">${cat.name}</h3>
-                        
                     </div>
                 </a>
             `).join("");
         }
 
-     
+        function renderTestimonials(testimonials) {
+            return testimonials.map(testimonial => `
+                <div class="bg-white rounded-2xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <img src="${testimonial.image}" alt="${testimonial.alt}" class="w-14 h-14 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="font-bold text-gray-800">${testimonial.name}</h4>
+                            <div class="text-yellow-400">
+                                ${Array.from({ length: testimonial.rating }, () => '<i class="fas fa-star"></i>').join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"${testimonial.comment}"</p>
+                </div>
+            `).join("");
+        }
+
         function renderFooterLinks(links) {
             return links.map(link => `
                 <li><a href="${link.href}" class="text-gray-400 hover:text-white transition-colors">${link.label}</a></li>
             `).join("");
         }
 
-        function renderCartItems(items) {
-            if (items.length === 0) {
-                document.getElementById('empty-cart').classList.remove('hidden');
-                return '';
-            }
-            
-            document.getElementById('empty-cart').classList.add('hidden');
-            return items.map(item => `
-                <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-                    <div class="w-20 h-20 rounded-lg overflow-hidden mr-4">
-                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="flex-grow">
-                        <h4 class="font-bold text-gray-800">${item.name}</h4>
-                        <p class="text-gray-600 text-sm">${item.description}</p>
-                         <p class="text-xs text-gray-500 mt-1">
-                           Tamaño: ${item.size || 'Normal'}
-                          </p>
-
-                        <p class="text-xs text-gray-500">
-                        Relleno: ${item.fill || 'Ninguno'}
-                       </p>
-
-                       <p class="text-xs text-gray-500">
-                        ${item.extra || ''}
-                        </p>
-                        <div class="flex items-center justify-between mt-2">
-                            <div class="flex items-center">
-                                <button onclick="updateQuantity(${item.id}, -1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fas fa-minus text-sm"></i>
-                                </button>
-                                <span class="mx-4 font-bold">${item.quantity}</span>
-                                <button onclick="updateQuantity(${item.id}, 1)" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300">
-                                    <i class="fas fa-plus text-sm"></i>
-                                </button>
-                            </div>
-                            <span class="font-bold text-primary">$${(item.price * item.quantity).toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <button onclick="removeFromCart(${item.id})" class="ml-4 text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `).join("");
-        }
-
-        // Cart Functions
         function addToCart(productId) {
             const product = featuredProductsData.find(p => p.id === productId);
             if (!product) return;
 
-            const existingItem = cartData.find(item => item.id === productId);
-            if (existingItem) {
-                existingItem.quantity++;
-            } else {
-                cartData.push({
-                    ...product,
-                    quantity: 1
-                });
-            }
-
-            updateCartDisplay();
-            showCartNotification();
-        }
-
-        function updateQuantity(productId, change) {
-            const item = cartData.find(item => item.id === productId);
-            if (!item) return;
-
-            item.quantity += change;
-            if (item.quantity <= 0) {
-                removeFromCart(productId);
-            } else {
-                updateCartDisplay();
-            }
-        }
-
-        function removeFromCart(productId) {
-            const index = cartData.findIndex(item => item.id === productId);
-            if (index > -1) {
-                cartData.splice(index, 1);
-                updateCartDisplay();
-            }
-        }
-
-        function updateCartDisplay() {
-            const cartCount = cartData.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cart-count').textContent = cartCount;
-            
-            cartTotal = cartData.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            document.getElementById('cart-total').textContent = `$${cartTotal.toFixed(2)}`;
-            
-            document.getElementById('cart-items').innerHTML = renderCartItems(cartData);
-            // Guardar carrito
-             localStorage.setItem('cart', JSON.stringify(cartData));
-        }
-
-        function showCartNotification() {
-            const cartBtn = document.getElementById('cart-btn');
-            cartBtn.classList.add('animate-pulse');
-            setTimeout(() => cartBtn.classList.remove('animate-pulse'), 1000);
+            Cart.addItem(product);
         }
         // Abrir modal del producto
 function openProductModal(productId) {
@@ -818,18 +680,15 @@ function addConfiguredProduct() {
 
     if (!product) return;
 
-    cartData.push({
-        ...product,
-        quantity: 1,
-        size,
-        fill,
-        extra
-    });
-
-    updateCartDisplay();
+    Cart.addItem(product, { size, fill, extra });
     closeProductModal();
-    showCartNotification();
 }
+
+        window.cartRequiresLogin = true;
+        window.cartUserLoggedIn = <?php echo isset($_SESSION['usuario']) ? 'true' : 'false'; ?>;
+        window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
+        window.cartCheckoutUrl = 'pago.php';
+
 
         // Event Handlers
         document.addEventListener('DOMContentLoaded', function() {
@@ -841,23 +700,7 @@ function addConfiguredProduct() {
             document.getElementById('testimonials').innerHTML = renderTestimonials(testimonialsData);
             document.getElementById('footer-links').innerHTML = renderFooterLinks(footerLinksData);
             document.getElementById('footer-categories').innerHTML = renderFooterLinks(footerCategoriesData);
-
-            // Cart Modal Toggle
-            document.getElementById('cart-btn').addEventListener('click', function(e) {
-                e.preventDefault();
-                document.getElementById('cart-modal').classList.remove('hidden');
-            });
-
-          document.getElementById('close-cart').onclick = closeCart;
-
-            document.getElementById('cart-modal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.classList.add('hidden');
-                }
-            });
-
-
-
+            Cart.updateDisplay();
             // Smooth Scrolling for Navigation Links
             document.addEventListener('click', function(e) {
                 const link = e.target.closest('a[href^="#"]');
@@ -869,7 +712,7 @@ function addConfiguredProduct() {
                 e.preventDefault();
                 
                 if (href === '#cart') {
-                    document.getElementById('cart-modal').classList.remove('hidden');
+                    Cart.open();
                     return;
                 }
                 
@@ -880,28 +723,12 @@ function addConfiguredProduct() {
                 }
             });
         });
-
         // Make cart functions globally available for onclick handlers
         window.addToCart = addToCart;
-        window.updateQuantity = updateQuantity;
-        window.removeFromCart = removeFromCart;
-        function openCart() {
-
-    document.getElementById('cart-modal')
-        .classList.remove('hidden');
-
-}
-
-function closeCart() {
-
-    document.getElementById('cart-modal')
-        .classList.add('hidden');
-
-}
 function proceedToCheckout() {
 
     // Carrito vacío
-    if (cartData.length === 0) {
+    if (Cart.getItems().length === 0) {
 
         alert('Tu carrito está vacío');
         return;
@@ -929,3 +756,4 @@ function proceedToCheckout() {
     </script>
 </body>
 </html>
+
