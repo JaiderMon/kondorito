@@ -6,7 +6,7 @@ $correo = trim($_POST['correo'] ?? '');
 $password = $_POST['password'] ?? '';
 
 if ($correo === '' || $password === '') {
-    echo "<h3>Correo y contrasena son obligatorios</h3>";
+    header("Location: login.php?error=campos");
     exit();
 }
 
@@ -24,5 +24,5 @@ if ($usuario && password_verify($password, $usuario['password'])) {
     exit();
 }
 
-echo "<h3>Correo o contrasena incorrectos</h3>";
-?>
+header("Location: login.php?error=credenciales");
+exit();

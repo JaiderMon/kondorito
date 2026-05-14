@@ -1,3 +1,17 @@
+<?php
+$error = $_GET['error'] ?? '';
+
+$mensajeError = '';
+
+if ($error === 'campos') {
+    $mensajeError = 'Debes completar el correo y la contraseña.';
+}
+
+if ($error === 'credenciales') {
+    $mensajeError = 'El correo o la contraseña son incorrectos.';
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -28,6 +42,12 @@
         <h2 class="text-2xl font-bold text-center text-orange-600 mb-6">
             Iniciar Sesión
         </h2>
+        <?php if ($mensajeError !== ''): ?>
+            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                <i class="fas fa-circle-exclamation mr-2"></i>
+                <?php echo htmlspecialchars($mensajeError, ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Formulario -->
         <form action="procesar_login.php" method="POST">
