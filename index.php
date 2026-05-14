@@ -651,6 +651,11 @@ function openProductModal(productId) {
     document.getElementById("modalDescription").textContent = product.description;
     document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
 
+    document.getElementById("cakeSize").selectedIndex = 0;
+    document.getElementById("cakeFill").selectedIndex = 0;
+    document.getElementById("extraDescription").value = "";
+
+
     // Guardar id actual
     document.getElementById("productModal").dataset.productId = product.id;
 
