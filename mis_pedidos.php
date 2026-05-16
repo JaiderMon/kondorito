@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once "conexion.php";
 
 if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
     header("Location: login.php");
@@ -9,7 +10,78 @@ if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
 function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
+
+function estadoPedidoTexto($estado) {
+    $textos = [
+        'pagado' => 'Pagado',
+        'en_preparacion' => 'En preparación',
+        'en_camino' => 'En camino',
+        'entregado' => 'Entregado',
+        'cancelado' => 'Cancelado'
+    ];
+
+    return $textos[$estado] ?? ucfirst((string) $estado);
+}
+
+function estadoPedidoClase($estado) {
+    $clases = [
+        'pagado' => 'bg-green-100 text-green-700',
+        'en_preparacion' => 'bg-yellow-100 text-yellow-700',
+        'en_camino' => 'bg-blue-100 text-blue-700',
+        'entregado' => 'bg-gray-100 text-gray-600',
+        'cancelado' => 'bg-red-100 text-red-600'
+    ];
+
+    return $clases[$estado] ?? 'bg-gray-100 text-gray-600';
+}
+
+$correo = $_SESSION['correo'];
+
+$stmtPedidos = $pdo->prepare(
+    "SELECT id, total, estado, ciudad, direccion, creado_en
+     FROM pedidos
+     WHERE correo_usuario = :correo
+     ORDER BY creado_en DESC"
+);
+
+$stmtPedidos->execute([
+    'correo' => $correo
+]);
+
+$pedidos = $stmtPedidos->fetchAll();
+
+$detallesPorPedido = [];
+
+if (count($pedidos) > 0) {
+    $pedidoIds = array_column($pedidos, 'id');
+    $placeholders = implode(',', array_fill(0, count($pedidoIds), '?'));
+
+    $stmtDetalles = $pdo->prepare(
+        "SELECT pedido_id, nombre_producto, descripcion_producto, tamano, relleno,
+                descripcion_adicional, precio_unitario, cantidad, subtotal
+         FROM detalle_pedidos
+         WHERE pedido_id IN ($placeholders)
+         ORDER BY id ASC"
+    );
+
+    $stmtDetalles->execute($pedidoIds);
+
+    foreach ($stmtDetalles->fetchAll() as $detalle) {
+        $detallesPorPedido[$detalle['pedido_id']][] = $detalle;
+    }
+}
+
+$estadosHistorial = ['entregado', 'cancelado'];
+
+$pedidosEnCurso = array_values(array_filter($pedidos, function ($pedido) use ($estadosHistorial) {
+    return !in_array($pedido['estado'], $estadosHistorial, true);
+}));
+
+$pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use ($estadosHistorial) {
+    return in_array($pedido['estado'], $estadosHistorial, true);
+}));
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -141,22 +213,88 @@ function e($value) {
                             </p>
                         </div>
                         <span class="rounded-full bg-pastel-yellow px-4 py-2 text-sm font-semibold text-pastel-brown">
-                            0
+                            <?php echo count($pedidosEnCurso); ?>
                         </span>
                     </div>
 
-                    <div class="rounded-3xl border-2 border-dashed border-pink-200 bg-pink-50/50 px-6 py-12 text-center">
-                        <i class="fas fa-box-open text-5xl text-pink-300"></i>
-                        <h4 class="mt-5 text-xl font-bold text-pastel-brown">
-                            A&uacute;n no tienes pedidos en curso
-                        </h4>
-                        <p class="mt-2 text-gray-500">
-                            Cuando realices una compra, podr&aacute;s seguir aqu&iacute; su estado.
-                        </p>
-                        <a href="Catalogocompleto.php" class="mt-6 inline-flex rounded-full bg-primary px-6 py-3 font-semibold text-white shadow-md transition hover:bg-secondary">
-                            Ver cat&aacute;logo
-                        </a>
-                    </div>
+                    <?php if (count($pedidosEnCurso) === 0): ?>
+                        <div class="rounded-3xl border-2 border-dashed border-pink-200 bg-pink-50/50 px-6 py-12 text-center">
+                            <i class="fas fa-box-open text-5xl text-pink-300"></i>
+                            <h4 class="mt-5 text-xl font-bold text-pastel-brown">
+                                A&uacute;n no tienes pedidos en curso
+                            </h4>
+                            <p class="mt-2 text-gray-500">
+                                Cuando realices una compra, podr&aacute;s seguir aqu&iacute; su estado.
+                            </p>
+                            <a href="Catalogocompleto.php" class="mt-6 inline-flex rounded-full bg-primary px-6 py-3 font-semibold text-white shadow-md transition hover:bg-secondary">
+                                Ver cat&aacute;logo
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="space-y-5">
+                            <?php foreach ($pedidosEnCurso as $pedido): ?>
+                                <?php $detalles = $detallesPorPedido[$pedido['id']] ?? []; ?>
+
+                                <article class="rounded-3xl border border-pink-100 bg-pink-50/40 p-5">
+                                    <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+                                        <div>
+                                            <h4 class="text-xl font-bold text-pastel-brown">
+                                                Pedido #<?php echo e($pedido['id']); ?>
+                                            </h4>
+                                            <p class="text-sm text-gray-500">
+                                                <?php echo e(date('d/m/Y h:i A', strtotime($pedido['creado_en']))); ?>
+                                            </p>
+                                        </div>
+
+                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo e(estadoPedidoClase($pedido['estado'])); ?>">
+                                            <?php echo e(estadoPedidoTexto($pedido['estado'])); ?>
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <?php foreach ($detalles as $detalle): ?>
+                                            <div class="rounded-2xl bg-white p-4 shadow-sm">
+                                                <div class="flex justify-between gap-4">
+                                                    <div>
+                                                        <p class="font-semibold text-gray-800">
+                                                            <?php echo e($detalle['nombre_producto']); ?> x<?php echo e($detalle['cantidad']); ?>
+                                                        </p>
+
+                                                        <?php if (!empty($detalle['tamano']) || !empty($detalle['relleno'])): ?>
+                                                            <p class="mt-1 text-xs text-gray-500">
+                                                                Tama&ntilde;o: <?php echo e($detalle['tamano'] ?: 'Normal'); ?> |
+                                                                Relleno: <?php echo e($detalle['relleno'] ?: 'Ninguno'); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+
+                                                        <?php if (!empty($detalle['descripcion_adicional'])): ?>
+                                                            <p class="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                                                                Nota: <?php echo e($detalle['descripcion_adicional']); ?>
+                                                            </p>
+                                                        <?php endif; ?>
+                                                    </div>
+
+                                                    <span class="font-bold text-primary">
+                                                        $<?php echo number_format((float) $detalle['subtotal'], 2); ?>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                    <div class="mt-5 flex flex-wrap justify-between gap-3 border-t border-pink-100 pt-4 text-sm">
+                                        <span class="text-gray-500">
+                                            Entrega: <?php echo e($pedido['direccion'] ?: 'Sin direcci&oacute;n'); ?>, <?php echo e($pedido['ciudad'] ?: 'Sin ciudad'); ?>
+                                        </span>
+                                        <span class="text-lg font-bold text-pastel-brown">
+                                            Total: $<?php echo number_format((float) $pedido['total'], 2); ?>
+                                        </span>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
                 </div>
 
                 <div class="rounded-3xl bg-white p-6 sm:p-8 shadow-xl">
@@ -170,19 +308,63 @@ function e($value) {
                             </p>
                         </div>
                         <span class="rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-500">
-                            0
+                            <?php echo count($pedidosHistorial); ?>
                         </span>
+
                     </div>
 
-                    <div class="rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center">
-                        <i class="fas fa-history text-5xl text-gray-300"></i>
-                        <h4 class="mt-5 text-xl font-bold text-pastel-brown">
-                            A&uacute;n no tienes historial de pedidos
-                        </h4>
-                        <p class="mt-2 text-gray-500">
-                            Tus pedidos finalizados se guardar&aacute;n en esta secci&oacute;n.
-                        </p>
-                    </div>
+                    <?php if (count($pedidosHistorial) === 0): ?>
+                        <div class="rounded-3xl border-2 border-dashed border-gray-200 bg-gray-50 px-6 py-12 text-center">
+                            <i class="fas fa-history text-5xl text-gray-300"></i>
+                            <h4 class="mt-5 text-xl font-bold text-pastel-brown">
+                                A&uacute;n no tienes historial de pedidos
+                            </h4>
+                            <p class="mt-2 text-gray-500">
+                                Tus pedidos finalizados se guardar&aacute;n en esta secci&oacute;n.
+                            </p>
+                        </div>
+                    <?php else: ?>
+                        <div class="space-y-5">
+                            <?php foreach ($pedidosHistorial as $pedido): ?>
+                                <?php $detalles = $detallesPorPedido[$pedido['id']] ?? []; ?>
+
+                                <article class="rounded-3xl border border-gray-100 bg-gray-50 p-5">
+                                    <div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+                                        <div>
+                                            <h4 class="text-xl font-bold text-pastel-brown">
+                                                Pedido #<?php echo e($pedido['id']); ?>
+                                            </h4>
+                                            <p class="text-sm text-gray-500">
+                                                <?php echo e(date('d/m/Y h:i A', strtotime($pedido['creado_en']))); ?>
+                                            </p>
+                                        </div>
+
+                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo e(estadoPedidoClase($pedido['estado'])); ?>">
+                                            <?php echo e(estadoPedidoTexto($pedido['estado'])); ?>
+                                        </span>
+                                    </div>
+
+                                    <div class="space-y-2 text-sm text-gray-600">
+                                        <?php foreach ($detalles as $detalle): ?>
+                                            <div class="flex justify-between gap-4">
+                                                <span>
+                                                    <?php echo e($detalle['nombre_producto']); ?> x<?php echo e($detalle['cantidad']); ?>
+                                                </span>
+                                                <span class="font-semibold">
+                                                    $<?php echo number_format((float) $detalle['subtotal'], 2); ?>
+                                                </span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+
+                                    <div class="mt-4 border-t border-gray-200 pt-4 text-right text-lg font-bold text-pastel-brown">
+                                        Total: $<?php echo number_format((float) $pedido['total'], 2); ?>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
                 </div>
 
             </div>

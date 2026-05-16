@@ -215,38 +215,51 @@
     </div>
  <script>
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let cart = [];
 
-    const paymentItems = document.getElementById('payment-items');
+    document.addEventListener('DOMContentLoaded', function () {
+        cart = Cart.getItems();
 
-    let total = 0;
+        const paymentItems = document.getElementById('payment-items');
+        const paymentTotal = document.getElementById('payment-total');
 
-    cart.forEach(item => {
+        let total = 0;
 
-        total += item.price * item.quantity;
+        if (cart.length === 0) {
+            paymentItems.innerHTML = `
+                <p class="text-gray-500">
+                    No hay productos en el carrito.
+                </p>
+            `;
+            paymentTotal.textContent = '$0.00';
+            return;
+        }
 
-        paymentItems.innerHTML += `
+        paymentItems.innerHTML = cart.map(item => {
+            const subtotal = Number(item.price) * Number(item.quantity);
+            total += subtotal;
 
-            <div class="flex justify-between text-lg">
+            return `
+                <div class="flex justify-between gap-4 text-lg">
+                    <span>
+                        ${item.name} x${item.quantity}
+                    </span>
+                    <span>
+                        $${subtotal.toFixed(2)}
+                    </span>
+                </div>
+            `;
+        }).join('');
 
-                <span>
-                    ${item.name} x${item.quantity}
-                </span>
-
-                <span>
-                    $${(item.price * item.quantity).toFixed(2)}
-                </span>
-
-            </div>
-
-        `;
-
+        paymentTotal.textContent = `$${total.toFixed(2)}`;
     });
-
-    document.getElementById('payment-total')
-        .textContent = `$${total.toFixed(2)}`;
           
         async function payWithStripe() {
+
+        if (cart.length === 0) {
+            alert('No hay productos en el carrito.');
+            return;
+        }
 
         const response = await fetch('stripe-checkout.php', {
 
