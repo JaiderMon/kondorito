@@ -146,6 +146,7 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
                     <details class="relative">
                         <summary class="flex cursor-pointer list-none items-center text-gray-700 hover:text-primary">
                             <i class="fas fa-user text-lg"></i>
+                            <span class="ml-1 sm:hidden">Cuenta</span>
                             <span class="ml-1 hidden sm:inline">Hola, <?php echo e($_SESSION['usuario']); ?></span>
                             <i class="fas fa-chevron-down ml-2 text-xs"></i>
                         </summary>

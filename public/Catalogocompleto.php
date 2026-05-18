@@ -90,6 +90,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
                         <details class="relative">
                             <summary class="flex cursor-pointer list-none items-center text-gray-700 hover:text-primary">
                                 <i class="fas fa-user text-lg"></i>
+                                <span class="ml-1 sm:hidden">Cuenta</span>
                                 <span class="ml-1 hidden sm:inline">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
                                 <i class="fas fa-chevron-down ml-2 text-xs"></i>
                             </summary>
@@ -109,7 +110,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
                             </div>
                         </details>
                     <?php else: ?>
-                        <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                        <a href="login.php" class="inline-flex items-center text-gray-700 hover:text-primary">
                             <i class="fas fa-user text-lg"></i>
                             <span class="ml-1">Mi cuenta</span>
                         </a>
