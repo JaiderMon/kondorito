@@ -275,6 +275,11 @@
 
         const data = await response.json();
 
+        if (!response.ok || !data.url) {
+            alert(data.error || 'No se pudo iniciar el pago.');
+            return;
+        }
+
         window.location.href = data.url;
 
     }
