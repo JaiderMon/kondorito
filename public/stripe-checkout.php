@@ -1,7 +1,7 @@
 <?php
 
-require_once __DIR__ . '/cargar_env.php';
-require 'vendor/autoload.php';
+require_once __DIR__ . '/../cargar_env.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Use an environment variable for the Stripe key instead of storing it in source control.
 \Stripe\Stripe::setApiKey(getenv('STRIPE_API_KEY'));
