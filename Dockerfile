@@ -13,4 +13,4 @@ RUN composer install --no-dev --optimize-autoloader
 
 COPY . .
 
-CMD php -S 0.0.0.0:${PORT:-10000} -t public
+CMD php -S 0.0.0.0:${PORT:-10000} -t public public/router.php
