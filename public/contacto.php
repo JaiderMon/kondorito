@@ -33,7 +33,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Open+Sans:wght@300;400;600&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
@@ -57,7 +57,7 @@
 <body class="bg-gradient-to-br from-orange-50 via-pink-50 to-amber-50 text-gray-800">
 
     <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white shadow-md">
+    <header class="sticky top-0 z-50 bg-white shadow-md" style="font-family: 'Open Sans', sans-serif;">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4 flex-wrap gap-4">
 
