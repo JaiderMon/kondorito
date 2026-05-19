@@ -33,7 +33,7 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <!-- Fuente -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Open+Sans:wght@300;400;600&family=Poppins:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
@@ -57,7 +57,7 @@
 <body class="bg-gradient-to-br from-orange-50 via-pink-50 to-amber-50 text-gray-800">
 
     <!-- HEADER -->
-    <header class="sticky top-0 z-50 bg-white shadow-md">
+    <header class="sticky top-0 z-50 bg-white shadow-md" style="font-family: 'Open Sans', sans-serif;">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4 flex-wrap gap-4">
 
@@ -83,6 +83,7 @@
                         <details class="relative">
                             <summary class="flex cursor-pointer list-none items-center text-gray-700 hover:text-primary">
                                 <i class="fas fa-user text-lg"></i>
+                                <span class="ml-1 sm:hidden">Cuenta</span>
                                 <span class="ml-1 hidden sm:inline">Hola, <?php echo htmlspecialchars($_SESSION['usuario'], ENT_QUOTES, 'UTF-8'); ?></span>
                                 <i class="fas fa-chevron-down ml-2 text-xs"></i>
                             </summary>
@@ -102,7 +103,7 @@
                             </div>
                         </details>
                     <?php else: ?>
-                        <a href="login.php" class="hidden sm:inline-flex items-center text-gray-700 hover:text-primary">
+                        <a href="login.php" class="inline-flex items-center text-gray-700 hover:text-primary">
                             <i class="fas fa-user text-lg"></i>
                             <span class="ml-1">Mi cuenta</span>
                         </a>
