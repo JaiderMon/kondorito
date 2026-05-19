@@ -1,6 +1,5 @@
 <?php
 $error = $_GET['error'] ?? '';
-
 $mensajeError = '';
 
 if ($error === 'campos') {
@@ -9,6 +8,14 @@ if ($error === 'campos') {
 
 if ($error === 'credenciales') {
     $mensajeError = 'El correo o la contraseña son incorrectos.';
+}
+
+if ($error === 'correo_no_existe') {
+    $mensajeError = 'El correo ingresado no existe.';
+}
+
+if ($error === 'password_actualizada') {
+    $mensajeError = 'Contraseña actualizada correctamente.';
 }
 ?>
 
@@ -42,6 +49,8 @@ if ($error === 'credenciales') {
         <h2 class="text-2xl font-bold text-center text-orange-600 mb-6">
             Iniciar Sesión
         </h2>
+
+        <!-- Mensajes -->
         <?php if ($mensajeError !== ''): ?>
             <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                 <i class="fas fa-circle-exclamation mr-2"></i>
@@ -55,19 +64,34 @@ if ($error === 'credenciales') {
             <!-- Email -->
             <div class="mb-4">
                 <label class="block text-gray-600 mb-1">Correo</label>
-                <input type="email" name="correo" required
+                <input 
+                    type="email" 
+                    name="correo" 
+                    required
                     class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
             </div>
 
             <!-- Password -->
-            <div class="mb-4">
+            <div class="mb-2">
                 <label class="block text-gray-600 mb-1">Contraseña</label>
-                <input type="password" name="password" required
+                <input 
+                    type="password" 
+                    name="password" 
+                    required
                     class="w-full px-4 py-2 rounded-xl border border-gray-200 focus:ring-2 focus:ring-orange-400 focus:outline-none transition">
             </div>
 
+            <!-- Olvidaste contraseña -->
+            <div class="text-right mb-5">
+                <a href="recuperar_contraseña.php"
+                   class="text-sm text-orange-500 hover:text-orange-600 hover:underline">
+                    ¿Olvidaste tu contraseña?
+                </a>
+            </div>
+
             <!-- Botón -->
-            <button type="submit"
+            <button 
+                type="submit"
                 class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform shadow-md">
                 Ingresar
             </button>
