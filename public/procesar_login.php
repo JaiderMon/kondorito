@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/../conexion.php';
+require_once DIR . '/../conexion.php';
 
 $correo = trim($_POST['correo'] ?? '');
 $password = $_POST['password'] ?? '';
