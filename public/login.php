@@ -1,6 +1,5 @@
 <?php
 $error = $_GET['error'] ?? '';
-
 $mensajeError = '';
 
 if ($error === 'campos') {
