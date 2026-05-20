@@ -1,6 +1,6 @@
 <?php
 
-require 'conexionpedidos.php';
+require_once __DIR__ . '/conexion.php';
 
 $fechaSeleccionada = date('Y-m-d');
 
@@ -9,16 +9,22 @@ if(isset($_GET['fecha']) && !empty($_GET['fecha'])){
     $fechaSeleccionada = $_GET['fecha'];
 
 }
+
 $verificar = "
 SELECT *
 FROM inventario
-WHERE fecha = '$fechaSeleccionada'
+WHERE fecha = :fecha
 LIMIT 1
 ";
 
-$resultVerificar = pg_query($conn, $verificar);
+$stmtVerificar = $pdo->prepare($verificar);
+$stmtVerificar->execute([
+    'fecha' => $fechaSeleccionada
+]);
 
-if(pg_num_rows($resultVerificar) == 0){
+$resultVerificar = $stmtVerificar->fetch();
+
+if(!$resultVerificar){
 
     $copiar = "
     INSERT INTO inventario (
@@ -34,28 +40,34 @@ if(pg_num_rows($resultVerificar) == 0){
         sabor,
         tamano,
         cantidad,
-        '$fechaSeleccionada'
+        :fecha
 
     FROM inventario
 
     WHERE fecha = (
         SELECT MAX(fecha)
         FROM inventario
-        WHERE fecha < '$fechaSeleccionada'
+        WHERE fecha < :fecha
     )
     ";
 
-    pg_query($conn, $copiar);
+    $stmtCopiar = $pdo->prepare($copiar);
+    $stmtCopiar->execute([
+        'fecha' => $fechaSeleccionada
+    ]);
 }
 
 $query = "
 SELECT *
 FROM inventario
-WHERE fecha = '$fechaSeleccionada'
+WHERE fecha = :fecha
 ORDER BY id DESC
 ";
 
-$inventario = pg_query($conn, $query);
+$inventario = $pdo->prepare($query);
+$inventario->execute([
+    'fecha' => $fechaSeleccionada
+]);
 
 ?>
 
@@ -244,7 +256,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                     <tbody>
 
-                    <?php while($item = pg_fetch_assoc($inventario)): ?>
+                    <?php while($item = $inventario->fetch()): ?>
 
                     <tr class="border-b hover:bg-orange-50 transition">
                     

@@ -1,6 +1,70 @@
 <?php
 
-require 'conexionpedidos.php';
+require_once __DIR__ . '/conexion.php';
+function estadoPedidoTexto($estado_tracking) {
+
+    $estados = [
+
+        'sin_asignar' => [
+            'texto' => 'Sin asignar',
+            'color' => 'bg-gray-100 text-gray-700',
+            'icono' => '📦'
+        ],
+
+        'en_preparacion' => [
+            'texto' => 'En preparación',
+            'color' => 'bg-yellow-100 text-yellow-700',
+            'icono' => '🍰'
+        ],
+
+        'en_camino' => [
+            'texto' => 'En camino',
+            'color' => 'bg-blue-100 text-blue-700',
+            'icono' => '🛵'
+        ],
+
+        'entregado' => [
+            'texto' => 'Entregado',
+            'color' => 'bg-green-100 text-green-700',
+            'icono' => '✅'
+        ],
+
+        'cancelado' => [
+            'texto' => 'Cancelado',
+            'color' => 'bg-red-100 text-red-700',
+            'icono' => '❌'
+        ]
+
+    ];
+
+    $data = $estados[$estado_tracking] ?? [
+        'texto' => ucfirst((string)$estado_tracking),
+        'color' => 'bg-gray-100 text-gray-700',
+        'icono' => '📦'
+    ];
+
+    return '
+
+    <div class=\"inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold ' . $data['color'] . '\">
+
+        <span>' . $data['icono'] . '</span>
+
+        <span>' . $data['texto'] . '</span>
+
+    </div>
+
+    ';
+}
+
+date_default_timezone_set('America/Bogota');
+$fechaSeleccionada = date('Y-m-d');
+
+if(isset($_GET['fecha']) && !empty($_GET['fecha'])){
+
+    $fechaSeleccionada = $_GET['fecha'];
+
+}
+
 
 $query = "
 SELECT 
@@ -11,13 +75,26 @@ SELECT
     detalle_pedidos.relleno,
     detalle_pedidos.descripcion_adicional,
     detalle_pedidos.cantidad
+
 FROM pedidos
-INNER JOIN detalle_pedidos 
-ON pedidos.id = detalle_pedidos.id
+
+INNER JOIN detalle_pedidos
+ON pedidos.id = detalle_pedidos.pedido_id
+
+WHERE DATE(pedidos.creado_en) = :fecha
+
 ORDER BY pedidos.id DESC
 ";
 
-$result = pg_query($conn, $query);
+
+$stmt = $pdo->prepare($query);
+
+$stmt->execute([
+    'fecha' => $fechaSeleccionada
+]);
+
+
+$result = $stmt;
 
 ?>
 
@@ -39,7 +116,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <body class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 min-h-screen p-8">
 
-<div class="flex">
+<div class="flex min-h-screen">
 
     <!-- Sidebar -->
     <aside class="w-72 bg-white shadow-2xl min-h-screen p-8">
@@ -102,9 +179,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
     </aside>
 
-<div class="max-w-7xl mx-auto">
+<div class="flex-1 w-full p-8 overflow-x-hidden">
 
-    <div class="flex items-center justify-between mb-10">
+    <div class="flex items-center gap-6 flex-wrap mb-8">
 
         <div>
             <h1 class="text-5xl font-extrabold text-amber-900">
@@ -115,21 +192,37 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                 Administración de pedidos Kondorito
             </p>
         </div>
+        <form method="GET" class="mb-8 flex gap-3 items-center">
+
+    <input
+        type="date"
+        name="fecha"
+        value="<?php echo $fechaSeleccionada; ?>"
+        class="border px-4 py-2 rounded-xl">
+
+    <button
+        class="bg-orange-500 text-white px-4 py-2 rounded-xl">
+
+        Filtrar
+
+    </button>
+
+</form>
 
         <div class="bg-white px-6 py-4 rounded-3xl shadow-lg border border-orange-100">
             <p class="text-sm text-gray-500">Pedidos registrados</p>
             <h2 class="text-3xl font-bold text-amber-900">
-                <?= pg_num_rows($result) ?>
+                <?= $result->rowCount() ?>
             </h2>
         </div>
 
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-    <?php while($pedido = pg_fetch_assoc($result)): ?>
+    <?php while($pedido = $result->fetch()): ?>
 
-        <div class="bg-white rounded-[30px] shadow-xl overflow-hidden border border-orange-100 hover:scale-[1.01] transition-all duration-300">
+        <div class="bg-white rounded-[30px] shadow-xl overflow-hidden border border-orange-100">
 
             <div class="bg-gradient-to-r from-amber-700 to-orange-500 p-6 text-white">
 
@@ -139,6 +232,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                         <h2 class="text-3xl font-bold">
                             Pedido #<?= $pedido['id'] ?>
                         </h2>
+                        <div class="mt-4">
+
+                        <?php echo estadoPedidoTexto($pedido['estado_tracking']); ?>
+
+                        </div>
 
                         <p class="opacity-90 mt-1">
                             <?= $pedido['nombre_usuario'] ?>
@@ -266,46 +364,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
                 </div>
 
-                <div class="flex items-center justify-between">
-
-                    <div>
-
-                        <p class="text-sm text-gray-500 mb-2">
-                            Estado del pedido
-                        </p>
-
-                        <select class="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-3 font-semibold text-amber-900 outline-none focus:ring-4 focus:ring-orange-200">
-
-                            <option <?= $pedido['estado'] == 'Pendiente' ? 'selected' : '' ?>>
-                                Pendiente
-                            </option>
-
-                            <option <?= $pedido['estado'] == 'Preparando' ? 'selected' : '' ?>>
-                                Preparando
-                            </option>
-
-                            <option <?= $pedido['estado'] == 'En camino' ? 'selected' : '' ?>>
-                                En camino
-                            </option>
-
-                            <option <?= $pedido['estado'] == 'Entregado' ? 'selected' : '' ?>>
-                                Entregado
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <button class="bg-gradient-to-r from-amber-700 to-orange-500 hover:opacity-90 text-white font-bold px-6 py-3 rounded-2xl shadow-lg transition-all">
-                        Guardar
-                    </button>
-
-                </div>
-
+            </div> 
+            
             </div>
-
-        </div>
-
     <?php endwhile; ?>
 
     </div>

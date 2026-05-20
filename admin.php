@@ -1,6 +1,17 @@
 <?php
 
-require 'conexionpedidos.php';
+
+require_once __DIR__ . '/conexion.php';
+
+date_default_timezone_set('America/Bogota');
+$fechaSeleccionada = date('Y-m-d');
+
+if(isset($_GET['fecha']) && !empty($_GET['fecha'])){
+
+    $fechaSeleccionada = $_GET['fecha'];
+
+}
+
 
 $query = "
 SELECT 
@@ -11,32 +22,46 @@ SELECT
     detalle_pedidos.relleno,
     detalle_pedidos.descripcion_adicional,
     detalle_pedidos.cantidad
+
 FROM pedidos
+
 INNER JOIN detalle_pedidos 
-ON pedidos.id = detalle_pedidos.id
+ON pedidos.id = detalle_pedidos.pedido_id
+
+WHERE DATE(pedidos.creado_en) = :fecha
+
 ORDER BY pedidos.id DESC
 ";
 
-$result = pg_query($conn, $query);
+
+$stmt = $pdo->prepare($query);
+
+$stmt->execute([
+    'fecha' => $fechaSeleccionada
+]);
+
 
 $totalVentas = 0;
 $pedidosArray = [];
 
-while($pedido = pg_fetch_assoc($result)) {
+while($pedido = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
     $totalVentas += $pedido['total'];
 
     $pedidosArray[] = $pedido;
+
 }
 
 $queryInventario = "
-SELECT * FROM inventario
+SELECT *
+FROM inventario
 ORDER BY id DESC
 ";
 
-$inventario = pg_query($conn, $queryInventario);
+$inventario = $pdo->query($queryInventario);
 
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -144,62 +169,64 @@ $inventario = pg_query($conn, $queryInventario);
             </div>
 
         </div>
+        
+        <!-- FILTRO POR FECHA -->
+    <form method="GET" class="mb-6 flex gap-3 items-center">
+
+        <input
+            type="date"
+            name="fecha"
+            value="<?php echo $fechaSeleccionada; ?>"
+            class="border px-4 py-2 rounded-xl">
+
+        <button
+            class="bg-orange-500 text-white px-4 py-2 rounded-xl">
+
+            Filtrar
+
+        </button>
+
+    </form>
 
 
-        <!-- Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+    <!-- Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14 max-w-4xl mx-auto">
 
-            <div class="bg-white rounded-[30px] shadow-xl p-8">
+    <!-- Pedidos -->
+    <div class="bg-white rounded-[30px] shadow-xl p-8 text-center">
 
-                <p class="text-gray-500 mb-3">
+        <p class="text-gray-500 mb-3">
 
-                    Pedidos Hoy
+            Pedidos Hoy
 
-                </p>
+        </p>
 
-                <h2 class="text-5xl font-bold text-amber-900">
+        <h2 class="text-5xl font-bold text-amber-900">
 
-                    <?php echo pg_num_rows($result); ?>
+            <?php echo $stmt->rowCount(); ?>
 
-                </h2>
+        </h2>
 
-            </div>
+    </div>
 
+    <!-- Ventas -->
+    <div class="bg-white rounded-[30px] shadow-xl p-8 text-center">
 
-            <div class="bg-white rounded-[30px] shadow-xl p-8">
+        <p class="text-gray-500 mb-3">
 
-                <p class="text-gray-500 mb-3">
+            Ventas Hoy
 
-                    Producción Pendiente
+        </p>
 
-                </p>
+        <h2 class="text-5xl font-bold text-green-600">
 
-                <h2 class="text-5xl font-bold text-red-500">
+            $<?= number_format($totalVentas) ?>
 
-                    12
+        </h2>
 
-                </h2>
+    </div>
 
-            </div>
-
-
-            <div class="bg-white rounded-[30px] shadow-xl p-8">
-
-                <p class="text-gray-500 mb-3">
-
-                    Ventas Hoy
-
-                </p>
-
-                <h2 class="text-5xl font-bold text-green-600">
-
-                    $<?= number_format($totalVentas) ?>
-
-                </h2>
-
-            </div>
-
-        </div>
+</div>
 
 
 
@@ -221,6 +248,7 @@ $inventario = pg_query($conn, $queryInventario);
 
 <?php foreach($pedidosArray as $pedido): ?>
 
+
 <div class="bg-white rounded-[35px] overflow-hidden shadow-2xl border border-orange-50 hover:scale-[1.01] transition-all duration-300">
 
     <div class="bg-gradient-to-r from-amber-700 via-orange-400 to-orange-300 p-7 text-white">
@@ -236,6 +264,68 @@ $inventario = pg_query($conn, $queryInventario);
                 <h2 class="text-4xl font-extrabold">
                     #<?= $pedido['id'] ?>
                 </h2>
+    
+                <form action="actualizar_tracking.php" method="POST" class="mt-4 flex gap-3 items-center">
+
+    <input 
+        type="hidden"
+        name="id"
+        value="<?php echo $pedido['id']; ?>">
+     
+        <input 
+        type="hidden"
+        name="fecha"
+        value="<?php echo $fechaSeleccionada; ?>">
+
+    <select
+    name="estado_tracking"
+    class="bg-white text-black border border-gray-300 rounded-xl px-4 py-2 w-52">
+
+    <option value="sin_asignar"
+        <?php if($pedido['estado_tracking'] == 'sin_asignar') echo 'selected'; ?>>
+
+        Sin asignar
+
+    </option>
+
+    <option value="en_preparacion"
+        <?php if($pedido['estado_tracking'] == 'en_preparacion') echo 'selected'; ?>>
+
+        En preparación
+
+    </option>
+
+    <option value="en_camino"
+        <?php if($pedido['estado_tracking'] == 'en_camino') echo 'selected'; ?>>
+
+        En camino
+
+    </option>
+
+    <option value="entregado"
+        <?php if($pedido['estado_tracking'] == 'entregado') echo 'selected'; ?>>
+
+        Entregado
+
+    </option>
+
+    <option value="cancelado"
+        <?php if($pedido['estado_tracking'] == 'cancelado') echo 'selected'; ?>>
+
+        Cancelado
+
+    </option>
+
+</select>
+
+    <button
+        class="bg-green-500 text-white px-4 py-2 rounded-xl">
+
+        Actualizar
+
+    </button>
+
+</form>
 
             </div>
 
@@ -327,59 +417,99 @@ $inventario = pg_query($conn, $queryInventario);
 
             </div>
 
-        </div>
+        </div>  
 
-        <div class="bg-amber-50 rounded-3xl p-6 border border-amber-100 mb-8">
+        <div class="bg-[#F7F3E8] rounded-[30px] p-8 border border-yellow-100 mb-8">
 
-            <div class="flex justify-between items-center mb-4">
+    <div class="flex justify-between items-center mb-8">
 
-                <h4 class="text-2xl font-bold text-amber-900">
-                    Estado del pedido
-                </h4>
+        <h3 class="text-4xl font-extrabold text-amber-900">
 
-                <span class="bg-amber-200 text-amber-900 font-bold px-4 py-2 rounded-2xl">
+            Producto
 
-                    <?= $pedido['estado'] ?>
+        </h3>
 
-                </span>
+        <div class="bg-yellow-200 text-amber-800 font-bold px-5 py-2 rounded-2xl shadow">
 
-            </div>
-
-            <select class="w-full bg-white border border-orange-200 rounded-2xl px-5 py-4 font-semibold text-amber-900 outline-none focus:ring-4 focus:ring-orange-200 transition-all">
-
-                <option <?= $pedido['estado'] == 'Pendiente' ? 'selected' : '' ?>>
-                    Pendiente
-                </option>
-
-                <option <?= $pedido['estado'] == 'Preparando' ? 'selected' : '' ?>>
-                    Preparando
-                </option>
-
-                <option <?= $pedido['estado'] == 'En camino' ? 'selected' : '' ?>>
-                    En camino
-                </option>
-
-                <option <?= $pedido['estado'] == 'Entregado' ? 'selected' : '' ?>>
-                    Entregado
-                </option>
-
-            </select>
-
-        </div>
-
-        <div class="flex justify-end">
-
-            <button class="bg-gradient-to-r from-amber-700 to-orange-500 hover:opacity-90 text-white font-bold px-8 py-4 rounded-2xl shadow-lg transition-all duration-300">
-
-                Guardar Cambios
-
-            </button>
+            x<?= $pedido['cantidad'] ?>
 
         </div>
 
     </div>
 
+    <h2 class="text-5xl font-extrabold text-slate-900 mb-5">
+
+        <?= $pedido['nombre_producto'] ?>
+
+    </h2>
+
+    <p class="text-gray-600 text-lg mb-8">
+
+        <?= $pedido['descripcion_producto'] ?>
+
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-6">
+
+        <div class="bg-white rounded-[25px] p-6 shadow-sm">
+
+            <p class="text-gray-500 mb-2">
+
+                Categoría
+
+            </p>
+
+            <h4 class="text-2xl font-bold text-amber-900">
+
+                <?= $pedido['categoria'] ?>
+
+            </h4>
+
+        </div>
+
+        <div class="bg-white rounded-[25px] p-6 shadow-sm">
+
+            <p class="text-gray-500 mb-2">
+
+                Relleno
+
+            </p>
+
+            <h4 class="text-2xl font-bold text-amber-900">
+
+                <?= $pedido['relleno'] ?>
+
+            </h4>
+
+        </div>
+
+    </div>
+
+    <?php if(!empty($pedido['descripcion_adicional'])): ?>
+
+        <div class="mt-8 bg-white rounded-[25px] p-6 shadow-sm">
+
+            <p class="text-gray-500 mb-3">
+
+                Descripción adicional
+
+            </p>
+
+            <p class="text-lg text-gray-700">
+
+                <?= $pedido['descripcion_adicional'] ?>
+
+            </p>
+
+        </div>
+
+    <?php endif; ?>
+      </div>
+
+  </div>
+
 </div>
+
 
 <?php endforeach; ?>
 

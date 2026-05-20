@@ -42,7 +42,7 @@ foreach ($cart as $item) {
 
 }
 
-$YOUR_DOMAIN = rtrim(getenv('APP_URL') ?: 'http://localhost/kondorito', '/');
+$YOUR_DOMAIN = rtrim(getenv('APP_URL') ?: 'http://localhost/kondorito/public', '/');
 
 try {
     $checkout_session = \Stripe\Checkout\Session::create([

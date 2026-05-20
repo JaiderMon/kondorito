@@ -1,6 +1,6 @@
 <?php
 
-require 'conexionpedidos.php';
+require_once __DIR__ . '/conexion.php';
 
 $id = $_POST['id'];
 
@@ -10,12 +10,17 @@ $fecha = $_POST['fecha'];
 
 $query = "
 UPDATE inventario
-SET cantidad = $cantidad
-WHERE id = $id
-AND fecha = '$fecha'
+SET cantidad = :cantidad
+WHERE id = :id
+AND fecha = :fecha
 ";
 
-pg_query($conn, $query);
+$stmt = $pdo->prepare($query);
+$stmt->execute([
+    'cantidad' => $cantidad,
+    'id' => $id,
+    'fecha' => $fecha
+]);
 
 header("Location: inventario.php?fecha=$fecha");
 

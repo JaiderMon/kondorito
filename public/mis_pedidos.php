@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('America/Bogota');
 require_once __DIR__ . '/../conexion.php';
 
 if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
@@ -11,19 +12,62 @@ function e($value) {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-function estadoPedidoTexto($estado) {
-    $textos = [
-        'pagado' => 'Pagado',
-        'en_preparacion' => 'En preparación',
-        'en_camino' => 'En camino',
-        'entregado' => 'Entregado',
-        'cancelado' => 'Cancelado'
+function estadoPedidoTexto($estado_tracking) {
+
+    $estados = [
+
+        'pagado' => [
+            'texto' => 'Pagado',
+            'color' => 'bg-blue-100 text-blue-700',
+            'icono' => '💳'
+        ],
+
+        'en_preparacion' => [
+            'texto' => 'En preparación',
+            'color' => 'bg-yellow-100 text-yellow-700',
+            'icono' => '🍰'
+        ],
+
+        'en_camino' => [
+            'texto' => 'En camino',
+            'color' => 'bg-orange-100 text-orange-700',
+            'icono' => '🛵'
+        ],
+
+        'entregado' => [
+            'texto' => 'Entregado',
+            'color' => 'bg-green-100 text-green-700',
+            'icono' => '✅'
+        ],
+
+        'cancelado' => [
+            'texto' => 'Cancelado',
+            'color' => 'bg-red-100 text-red-700',
+            'icono' => '❌'
+        ]
+
     ];
 
-    return $textos[$estado] ?? ucfirst((string) $estado);
+    $data = $estados[$estado_tracking] ?? [
+        'texto' => ucfirst((string)$estado_tracking),
+        'color' => 'bg-gray-100 text-gray-700',
+        'icono' => '📦'
+    ];
+
+    return '
+
+    <div class=\"inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold ' . $data['color'] . '\">
+
+        <span>' . $data['icono'] . '</span>
+
+        <span>' . $data['texto'] . '</span>
+
+    </div>
+
+    ';
 }
 
-function estadoPedidoClase($estado) {
+function estadoPedidoClase($estado_tracking) {
     $clases = [
         'pagado' => 'bg-green-100 text-green-700',
         'en_preparacion' => 'bg-yellow-100 text-yellow-700',
@@ -32,13 +76,13 @@ function estadoPedidoClase($estado) {
         'cancelado' => 'bg-red-100 text-red-600'
     ];
 
-    return $clases[$estado] ?? 'bg-gray-100 text-gray-600';
+    return $clases[$estado_tracking] ?? 'bg-gray-100 text-gray-600';
 }
 
 $correo = $_SESSION['correo'];
 
 $stmtPedidos = $pdo->prepare(
-    "SELECT id, total, estado, ciudad, direccion, creado_en
+    "SELECT id, total, estado_tracking, ciudad, direccion, creado_en
      FROM pedidos
      WHERE correo_usuario = :correo
      ORDER BY creado_en DESC"
@@ -74,11 +118,11 @@ if (count($pedidos) > 0) {
 $estadosHistorial = ['entregado', 'cancelado'];
 
 $pedidosEnCurso = array_values(array_filter($pedidos, function ($pedido) use ($estadosHistorial) {
-    return !in_array($pedido['estado'], $estadosHistorial, true);
+    return !in_array($pedido['estado_tracking'], $estadosHistorial, true);
 }));
 
 $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use ($estadosHistorial) {
-    return in_array($pedido['estado'], $estadosHistorial, true);
+    return in_array($pedido['estado_tracking'], $estadosHistorial, true);
 }));
 ?>
 
@@ -247,8 +291,8 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
                                             </p>
                                         </div>
 
-                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo e(estadoPedidoClase($pedido['estado'])); ?>">
-                                            <?php echo e(estadoPedidoTexto($pedido['estado'])); ?>
+                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo estadoPedidoClase($pedido['estado_tracking']); ?>">
+                                           <?php echo estadoPedidoTexto($pedido['estado_tracking']); ?>
                                         </span>
                                     </div>
 
@@ -340,8 +384,8 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
                                             </p>
                                         </div>
 
-                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo e(estadoPedidoClase($pedido['estado'])); ?>">
-                                            <?php echo e(estadoPedidoTexto($pedido['estado'])); ?>
+                                        <span class="rounded-full px-3 py-1 text-xs font-semibold <?php echo estadoPedidoClase($pedido['estado_tracking']); ?>">
+                                            <?php echo estadoPedidoTexto($pedido['estado_tracking']); ?>
                                         </span>
                                     </div>
 

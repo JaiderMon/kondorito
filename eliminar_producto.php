@@ -1,12 +1,15 @@
 <?php
 
-require 'conexionpedidos.php';
+require_once __DIR__ . '/conexion.php';
 
 $id = $_GET['id'];
 
-$query = "DELETE FROM inventario WHERE id = $id";
+$query = "DELETE FROM inventario WHERE id = :id";
 
-pg_query($conn, $query);
+$stmt = $pdo->prepare($query);
+$stmt->execute([
+    'id' => $id
+]);
 
 header("Location: inventario.php");
 

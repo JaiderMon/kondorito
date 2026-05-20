@@ -1,6 +1,6 @@
 <?php
 
-require 'conexionpedidos.php';
+require_once __DIR__ . '/conexion.php';
 
 $producto = $_POST['producto'];
 
@@ -16,10 +16,16 @@ INSERT INTO inventario
 
 VALUES
 
-('$producto', '$sabor', '$tamano', $cantidad, CURRENT_DATE)
+(:producto, :sabor, :tamano, :cantidad, CURRENT_DATE)
 ";
 
-pg_query($conn, $query);
+$stmt = $pdo->prepare($query);
+$stmt->execute([
+    'producto' => $producto,
+    'sabor' => $sabor,
+    'tamano' => $tamano,
+    'cantidad' => $cantidad
+]);
 
 header("Location: inventario.php");
 
