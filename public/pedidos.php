@@ -96,6 +96,17 @@ $stmt->execute([
 
 $result = $stmt;
 
+$stmtDomiciliarios = $pdo->query("
+    SELECT id, nombre, telefono, estado
+    FROM domiciliarios
+    ORDER BY nombre ASC
+");
+
+$domiciliarios = $stmtDomiciliarios->fetchAll();
+
+$mensajeOk = $_GET['ok'] ?? '';
+$mensajeError = $_GET['error'] ?? '';
+
 ?>
 
 <!DOCTYPE html>
@@ -217,6 +228,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         </div>
 
     </div>
+
+    <?php if ($mensajeOk !== ''): ?>
+        <div class="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-green-700 font-semibold">
+            <?= htmlspecialchars($mensajeOk, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($mensajeError !== ''): ?>
+        <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700 font-semibold">
+            <?= htmlspecialchars($mensajeError, ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    <?php endif; ?>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
@@ -361,6 +384,45 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
                     </div>
 
                     <?php endif; ?>
+
+                </div>
+
+                <div class="bg-blue-50 border border-blue-100 rounded-3xl p-6">
+
+                    <h3 class="text-xl font-bold text-blue-900 mb-4">
+                        Asignar domiciliario
+                    </h3>
+
+                    <?php if (!empty($pedido['domiciliario_id'])): ?>
+                        <p class="mb-4 text-sm font-semibold text-blue-700">
+                            Domiciliario asignado: #<?= htmlspecialchars((string) $pedido['domiciliario_id'], ENT_QUOTES, 'UTF-8') ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <form action="asignar_domiciliario.php" method="POST" class="space-y-4">
+                        <input type="hidden" name="pedido_id" value="<?= htmlspecialchars((string) $pedido['id'], ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="fecha" value="<?= htmlspecialchars($fechaSeleccionada, ENT_QUOTES, 'UTF-8') ?>">
+
+                        <select
+                            name="domiciliario_id"
+                            required
+                            class="w-full bg-white border border-blue-200 rounded-2xl px-4 py-3 font-semibold text-blue-900 outline-none focus:ring-4 focus:ring-blue-100">
+                            <option value="">Seleccionar domiciliario</option>
+
+                            <?php foreach ($domiciliarios as $domiciliario): ?>
+                                <option value="<?= htmlspecialchars((string) $domiciliario['id'], ENT_QUOTES, 'UTF-8') ?>">
+                                    <?= htmlspecialchars($domiciliario['nombre'], ENT_QUOTES, 'UTF-8') ?>
+                                    - <?= htmlspecialchars($domiciliario['estado'], ENT_QUOTES, 'UTF-8') ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <button
+                            type="submit"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-2xl shadow-lg transition">
+                            Asignar y enviar a PWA
+                        </button>
+                    </form>
 
                 </div>
 

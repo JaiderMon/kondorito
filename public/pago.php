@@ -115,7 +115,7 @@
         <div class="grid md:grid-cols-2 gap-10">
 
             <!-- Resumen -->
-            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
+            <div class="order-1 bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
 
@@ -137,10 +137,96 @@
 
                 </div>
 
+                <div id="payment-product-gallery" class="hidden grid-cols-2 gap-4 mt-8"></div>
+
             </div>
 
             <!-- Métodos -->
-            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10">
+            <div class="order-3 md:order-2 bg-white rounded-3xl shadow-2xl p-6 sm:p-10 flex flex-col justify-center min-h-[420px]">
+
+                <h2 class="text-3xl font-bold text-amber-900 mb-8">
+
+                    Datos de entrega
+
+                </h2>
+
+                <form id="delivery-form" class="hidden space-y-5">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Dirección de entrega
+                        </label>
+                        <input
+                            type="text"
+                            id="delivery-address"
+                            required
+                            placeholder="Ej: Balcones de la colina Cra 24#35-200"
+                            class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">
+                                Ciudad
+                            </label>
+                            <select
+                                id="delivery-city"
+                                required
+                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                                <option value="">Selecciona</option>
+                                <option value="Bucaramanga">Bucaramanga</option>
+                                <option value="Floridablanca">Floridablanca</option>
+                                <option value="Girón">Girón</option>
+                                <option value="Piedecuesta">Piedecuesta</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">
+                                Teléfono
+                            </label>
+                            <input
+                                type="tel"
+                                id="delivery-phone"
+                                required
+                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">
+                                Fecha de entrega
+                            </label>
+                            <input
+                                type="date"
+                                id="delivery-date"
+                                required
+                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-600 mb-2">
+                                Hora de entrega
+                            </label>
+                            <input
+                                type="time"
+                                id="delivery-time"
+                                required
+                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Indicaciones adicionales
+                        </label>
+                        <textarea
+                            id="delivery-notes"
+                            rows="3"
+                            placeholder="Ej: llamar al llegar, torre, apartamento, portería..."
+                            class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100"></textarea>
+                    </div>
+                </form>
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
 
@@ -210,18 +296,30 @@
 
             </div>
 
+            <div id="delivery-card" class="order-2 md:order-3 md:col-span-2 bg-white rounded-3xl shadow-2xl p-6 sm:p-10"></div>
+
         </div>
 
     </div>
  <script>
 
     let cart = [];
+    const deliveryStorageKey = `kondorito_delivery:${window.cartUserKey || 'guest'}`;
 
     document.addEventListener('DOMContentLoaded', function () {
         cart = Cart.getItems();
 
+        const deliveryForm = document.getElementById('delivery-form');
+        const deliveryTitle = deliveryForm.previousElementSibling;
+        const deliveryCard = document.getElementById('delivery-card');
+
+        deliveryCard.appendChild(deliveryTitle);
+        deliveryCard.appendChild(deliveryForm);
+        deliveryForm.classList.remove('hidden', 'mb-10');
+
         const paymentItems = document.getElementById('payment-items');
         const paymentTotal = document.getElementById('payment-total');
+        const paymentProductGallery = document.getElementById('payment-product-gallery');
 
         let total = 0;
 
@@ -238,20 +336,58 @@
         paymentItems.innerHTML = cart.map(item => {
             const subtotal = Number(item.price) * Number(item.quantity);
             total += subtotal;
+            const image = item.image || '';
 
             return `
-                <div class="flex justify-between gap-4 text-lg">
-                    <span>
-                        ${item.name} x${item.quantity}
-                    </span>
-                    <span>
-                        $${subtotal.toFixed(2)}
-                    </span>
+                <div class="flex gap-4">
+                    ${image ? `
+                        <img
+                            src="${image}"
+                            alt="${item.name}"
+                            class="h-20 w-20 rounded-2xl object-cover border border-orange-100 md:hidden">
+                    ` : ''}
+                    <div class="flex-1">
+                        <div class="flex justify-between gap-4 text-lg">
+                            <span>
+                                ${item.name} x${item.quantity}
+                            </span>
+                            <span>
+                                $${subtotal.toFixed(2)}
+                            </span>
+                        </div>
+                    </div>
                 </div>
             `;
         }).join('');
 
         paymentTotal.textContent = `$${total.toFixed(2)}`;
+
+        const productImages = cart
+            .filter(item => item.image)
+            .map(item => `
+                <img
+                    src="${item.image}"
+                    alt="${item.name}"
+                    class="h-36 w-full rounded-3xl object-cover border border-orange-100 shadow-sm">
+            `)
+            .join('');
+
+        paymentProductGallery.innerHTML = productImages;
+
+        if (productImages !== '') {
+            paymentProductGallery.classList.add('md:grid');
+        } else {
+            paymentProductGallery.classList.remove('md:grid');
+        }
+
+        const savedDelivery = JSON.parse(localStorage.getItem(deliveryStorageKey) || '{}');
+
+        document.getElementById('delivery-address').value = savedDelivery.direccion || '';
+        document.getElementById('delivery-city').value = savedDelivery.ciudad || '';
+        document.getElementById('delivery-phone').value = savedDelivery.telefono || '';
+        document.getElementById('delivery-date').value = savedDelivery.fecha_entrega || '';
+        document.getElementById('delivery-time').value = savedDelivery.hora_entrega || '';
+        document.getElementById('delivery-notes').value = savedDelivery.indicaciones_entrega || '';
     });
           
         async function payWithStripe() {
@@ -260,6 +396,23 @@
             alert('No hay productos en el carrito.');
             return;
         }
+
+        const deliveryForm = document.getElementById('delivery-form');
+
+        if (!deliveryForm.reportValidity()) {
+            return;
+        }
+
+        const delivery = {
+            direccion: document.getElementById('delivery-address').value.trim(),
+            ciudad: document.getElementById('delivery-city').value,
+            telefono: document.getElementById('delivery-phone').value.trim(),
+            fecha_entrega: document.getElementById('delivery-date').value,
+            hora_entrega: document.getElementById('delivery-time').value,
+            indicaciones_entrega: document.getElementById('delivery-notes').value.trim()
+        };
+
+        localStorage.setItem(deliveryStorageKey, JSON.stringify(delivery));
 
         const response = await fetch('stripe-checkout.php', {
 
