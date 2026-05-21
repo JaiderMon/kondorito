@@ -55,7 +55,7 @@ if ($admin && password_verify($password, $admin['password'])) {
     $_SESSION['admin_correo'] = $admin['correo'];
     $_SESSION['rol'] = 'admin';
 
-    header("Location: ../admin.php");
+    header("Location: admin.php");
     exit();
 
 }
