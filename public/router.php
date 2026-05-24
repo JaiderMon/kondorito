@@ -2,6 +2,11 @@
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 $path = rawurldecode($path);
 
+if ($path === '/router.php' || $path === '/router') {
+    header('Location: /index.php');
+    exit();
+}
+
 $aliases = [
     '/catalogocompleto.php' => '/Catalogocompleto.php',
 ];

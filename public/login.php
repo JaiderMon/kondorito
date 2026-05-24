@@ -83,7 +83,7 @@ if ($error === 'password_actualizada') {
 
             <!-- Olvidaste contraseña -->
             <div class="text-right mb-5">
-                <a href="../recuperar_contraseña.php"
+                <a href="recuperar_contraseña.php"
                    class="text-sm text-orange-500 hover:text-orange-600 hover:underline">
                     ¿Olvidaste tu contraseña?
                 </a>

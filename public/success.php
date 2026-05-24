@@ -26,9 +26,16 @@ require_once __DIR__ . '/../conexion.php';
     document.addEventListener('DOMContentLoaded', async function () {
         const statusElement = document.getElementById('order-status');
         const cart = window.Cart ? Cart.getItems() : [];
+        const deliveryStorageKey = `kondorito_delivery:${window.cartUserKey || 'guest'}`;
+        const delivery = JSON.parse(localStorage.getItem(deliveryStorageKey) || '{}');
 
         if (cart.length === 0) {
             statusElement.textContent = 'No encontramos productos pendientes por registrar.';
+            return;
+        }
+
+        if (!delivery.direccion || !delivery.ciudad || !delivery.telefono || !delivery.fecha_entrega || !delivery.hora_entrega) {
+            statusElement.textContent = 'No encontramos los datos de entrega del pedido.';
             return;
         }
 
@@ -38,7 +45,10 @@ require_once __DIR__ . '/../conexion.php';
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(cart)
+                body: JSON.stringify({
+                    cart,
+                    delivery
+                })
             });
 
             const data = await response.json();
@@ -50,6 +60,7 @@ require_once __DIR__ . '/../conexion.php';
 
             localStorage.removeItem(`cart:${window.cartUserKey}`);
             localStorage.removeItem('cart:guest');
+            localStorage.removeItem(deliveryStorageKey);
 
             statusElement.textContent = `Tu pedido #${data.pedido_id} fue registrado correctamente.`;
         } catch (error) {

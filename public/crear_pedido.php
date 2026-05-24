@@ -14,13 +14,37 @@ if (!isset($_SESSION['correo'], $_SESSION['usuario'])) {
     exit();
 }
 
-$cart = json_decode(file_get_contents('php://input'), true);
+$payload = json_decode(file_get_contents('php://input'), true);
+$cart = $payload['cart'] ?? $payload;
+$delivery = $payload['delivery'] ?? [];
 
 if (!is_array($cart) || count($cart) === 0) {
     http_response_code(400);
     echo json_encode([
         'ok' => false,
         'error' => 'El carrito está vacío.'
+    ]);
+    exit();
+}
+
+$direccionEntrega = trim($delivery['direccion'] ?? '');
+$ciudadEntrega = trim($delivery['ciudad'] ?? '');
+$telefonoEntrega = trim($delivery['telefono'] ?? '');
+$fechaEntrega = trim($delivery['fecha_entrega'] ?? '');
+$horaEntrega = trim($delivery['hora_entrega'] ?? '');
+$indicacionesEntrega = trim($delivery['indicaciones_entrega'] ?? '');
+
+if (
+    $direccionEntrega === '' ||
+    $ciudadEntrega === '' ||
+    $telefonoEntrega === '' ||
+    $fechaEntrega === '' ||
+    $horaEntrega === ''
+) {
+    http_response_code(400);
+    echo json_encode([
+        'ok' => false,
+        'error' => 'Faltan datos de entrega para registrar el pedido.'
     ]);
     exit();
 }
@@ -81,6 +105,9 @@ try {
             telefono,
             ciudad,
             direccion,
+            fecha_entrega,
+            hora_entrega,
+            indicaciones_entrega,
             total,
             estado,
             metodo_pago
@@ -90,6 +117,9 @@ try {
             :telefono,
             :ciudad,
             :direccion,
+            :fecha_entrega,
+            :hora_entrega,
+            :indicaciones_entrega,
             :total,
             'pagado',
             'stripe'
@@ -100,9 +130,12 @@ try {
     $stmtPedido->execute([
         'correo_usuario' => $usuario['correo'],
         'nombre_usuario' => $usuario['nombre'],
-        'telefono' => $usuario['telefono'] ?? null,
-        'ciudad' => $usuario['ciudad'] ?? null,
-        'direccion' => $usuario['direccion'] ?? null,
+        'telefono' => $telefonoEntrega,
+        'ciudad' => $ciudadEntrega,
+        'direccion' => $direccionEntrega,
+        'fecha_entrega' => $fechaEntrega,
+        'hora_entrega' => $horaEntrega,
+        'indicaciones_entrega' => $indicacionesEntrega !== '' ? $indicacionesEntrega : null,
         'total' => $totalPedido
     ]);
 
