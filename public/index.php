@@ -40,7 +40,7 @@ session_start();
             }
         }
     </script>
-    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/cart.js?v=2" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         @keyframes float {
@@ -547,7 +547,7 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
              loading="lazy">
 
         <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold">
-            $${product.price.toFixed(2)}
+           $ ${Number(product.price).toLocaleString('es-CO')}
         </div>
     </div>
 
@@ -650,7 +650,7 @@ function openProductModal(productId) {
     document.getElementById("modalImage").src = product.image;
     document.getElementById("modalName").textContent = product.name;
     document.getElementById("modalDescription").textContent = product.description;
-    document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
+    document.getElementById("modalPrice").textContent = `$ ${Number(product.price).toLocaleString('es-CO')}`;
 
     document.getElementById("cakeSize").selectedIndex = 0;
     document.getElementById("cakeFill").selectedIndex = 0;

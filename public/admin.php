@@ -46,11 +46,39 @@ $pedidosArray = [];
 
 while($pedido = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
+        $pedidoId = $pedido['id'];
+    if (!isset($pedidosArray[$pedidoId])) {
+
+    
+        
     $totalVentas += $pedido['total'];
 
-    $pedidosArray[] = $pedido;
+        $pedidosArray[$pedidoId] = [
+            'info' => [
+                'id' => $pedido['id'],
+                'nombre_usuario' => $pedido['nombre_usuario'],
+                'direccion' => $pedido['direccion'],
+                'telefono' => $pedido['telefono'],
+                'ciudad' => $pedido['ciudad'],
+                'metodo_pago' => $pedido['metodo_pago'],
+                'domiciliario_id' => $pedido['domiciliario_id'],
+                'estado_tracking' => $pedido['estado_tracking'],
+                'total' => $pedido['total']
+            ],
+            'productos' => []
+        ];
+    }
 
+    $pedidosArray[$pedidoId]['productos'][] = [
+        'nombre_producto' => $pedido['nombre_producto'],
+        'descripcion_producto' => $pedido['descripcion_producto'],
+        'categoria' => $pedido['categoria'],
+        'relleno' => $pedido['relleno'],
+        'descripcion_adicional' => $pedido['descripcion_adicional'],
+        'cantidad' => $pedido['cantidad']
+    ];
 }
+$totalPedidos = count($pedidosArray);
 
 $queryInventario = "
 SELECT *
@@ -214,7 +242,7 @@ $mensajeError = $_GET['error'] ?? '';
 
         <h2 class="text-5xl font-bold text-amber-900">
 
-            <?php echo $stmt->rowCount(); ?>
+           <?= $totalPedidos ?>
 
         </h2>
 
@@ -255,12 +283,17 @@ $mensajeError = $_GET['error'] ?? '';
             </div>
 
 
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+            <div class="columns-1 lg:columns-2 gap-8 space-y-8">
 
-<?php foreach($pedidosArray as $pedido): ?>
+<?php foreach($pedidosArray as $pedidoData): ?>
+
+<?php
+    $pedido = $pedidoData['info'];
+    $productos = $pedidoData['productos'];
+?>
 
 
-<div class="bg-white rounded-[35px] overflow-hidden shadow-2xl border border-orange-50 hover:scale-[1.01] transition-all duration-300">
+<div class="bg-white rounded-[35px] overflow-hidden shadow-2xl border border-orange-50 break-inside-avoid mb-8">
 
     <div class="bg-gradient-to-r from-amber-700 via-orange-400 to-orange-300 p-7 text-white">
 
@@ -430,34 +463,28 @@ $mensajeError = $_GET['error'] ?? '';
 
         </div>  
 
-        <div class="bg-[#F7F3E8] rounded-[30px] p-8 border border-yellow-100 mb-8">
+        <?php foreach($productos as $producto): ?>
+
+<div class="bg-[#F7F3E8] rounded-[30px] p-8 border border-yellow-100 mb-8">
 
     <div class="flex justify-between items-center mb-8">
 
         <h3 class="text-4xl font-extrabold text-amber-900">
-
             Producto
-
         </h3>
 
         <div class="bg-yellow-200 text-amber-800 font-bold px-5 py-2 rounded-2xl shadow">
-
-            x<?= $pedido['cantidad'] ?>
-
+            x<?= $producto['cantidad'] ?>
         </div>
 
     </div>
 
     <h2 class="text-5xl font-extrabold text-slate-900 mb-5">
-
-        <?= $pedido['nombre_producto'] ?>
-
+        <?= $producto['nombre_producto'] ?>
     </h2>
 
     <p class="text-gray-600 text-lg mb-8">
-
-        <?= $pedido['descripcion_producto'] ?>
-
+        <?= $producto['descripcion_producto'] ?>
     </p>
 
     <div class="grid md:grid-cols-2 gap-6">
@@ -465,15 +492,11 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-2">
-
                 Categoría
-
             </p>
 
             <h4 class="text-2xl font-bold text-amber-900">
-
-                <?= $pedido['categoria'] ?>
-
+                <?= $producto['categoria'] ?>
             </h4>
 
         </div>
@@ -481,42 +504,38 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-2">
-
                 Relleno
-
             </p>
 
             <h4 class="text-2xl font-bold text-amber-900">
-
-                <?= $pedido['relleno'] ?>
-
+                <?= $producto['relleno'] ?>
             </h4>
 
         </div>
 
     </div>
 
-    <?php if(!empty($pedido['descripcion_adicional'])): ?>
+    <?php if(!empty($producto['descripcion_adicional'])): ?>
 
         <div class="mt-8 bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-3">
-
                 Descripción adicional
-
             </p>
 
             <p class="text-lg text-gray-700">
-
-                <?= $pedido['descripcion_adicional'] ?>
-
+                <?= $producto['descripcion_adicional'] ?>
             </p>
 
         </div>
 
     <?php endif; ?>
-      
+
 </div>
+
+<?php endforeach; ?>
+
+
         <div class="bg-blue-50 border border-orange-100 rounded-3xl p-6">
 
                     <h3 class="text-xl font-bold text-orange-900 mb-4">

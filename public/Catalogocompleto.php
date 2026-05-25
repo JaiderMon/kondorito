@@ -50,7 +50,7 @@ $cantidadCarrito = count($_SESSION['carrito']);
     </script>
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/cart.js?v=2" defer></script>
 
     <style>
         @keyframes float {

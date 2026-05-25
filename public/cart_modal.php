@@ -25,7 +25,7 @@
             <div class="p-6 border-t bg-gray-50">
                 <div class="flex justify-between items-center mb-6">
                     <span class="text-xl font-bold">Total:</span>
-                    <span id="cart-total" class="text-2xl font-bold text-primary">$0.00</span>
+                    <span id="cart-total" class="text-2xl font-bold text-primary">$0</span>
                 </div>
                 <button id="checkout-btn" class="w-full bg-pastel-brown hover:bg-secondary text-white py-4 rounded-full font-semibold transition">
                     Proceder al pago

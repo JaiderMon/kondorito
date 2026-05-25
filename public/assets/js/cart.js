@@ -151,7 +151,7 @@
                                 <i class="fas fa-plus text-sm"></i>
                             </button>
                         </div>
-                        <span class="font-bold text-primary">$${(Number(item.price) * item.quantity).toFixed(2)}</span>
+                        <span class="font-bold text-primary"> $ ${Number(item.price * item.quantity).toLocaleString('es-CO')}</span>
                     </div>
                 </div>
                 <button onclick="Cart.removeItem(decodeURIComponent('${encodedKey}'))" class="ml-4 text-red-500 hover:text-red-700">
@@ -169,7 +169,7 @@
         renderItems();
 
         if (cartTotal) {
-            cartTotal.textContent = `$${getTotal().toFixed(2)}`;
+            cartTotal.textContent = `$ ${Cart.getTotal().toLocaleString('es-CO')}`;
         }
     }
 

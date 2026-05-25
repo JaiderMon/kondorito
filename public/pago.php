@@ -237,28 +237,38 @@
                 <div class="space-y-6">
 
                     <!-- Tarjeta -->
-                    <button
-                    class="w-full border-2 border-pink-200 hover:border-orange-400 rounded-3xl p-6 transition text-left">
+                    <label class="block cursor-pointer">
 
-                        <div class="flex items-center gap-5">
+    <input 
+        type="radio" 
+        name="metodo_pago" 
+        value="tarjeta"
+        class="hidden peer"
+    >
 
-                            <i class="fas fa-credit-card text-4xl text-orange-500"></i>
+    <div class="w-full border-2 border-pink-200 peer-checked:border-orange-500 peer-checked:bg-orange-50 rounded-3xl p-6 transition text-left">
 
-                            <div>
+        <div class="flex items-center gap-5">
 
-                                <h3 class="text-xl font-bold text-amber-900">
-                                    Tarjeta débito/crédito
-                                </h3>
+            <i class="fas fa-credit-card text-4xl text-orange-500"></i>
 
-                                <p class="text-gray-500">
-                                    Visa, Mastercard, Nequi, etc.
-                                </p>
+            <div>
 
-                            </div>
+                <h3 class="text-xl font-bold text-amber-900">
+                    Tarjeta débito/crédito
+                </h3>
 
-                        </div>
+                <p class="text-gray-500">
+                    Visa, Mastercard, Nequi, etc.
+                </p>
 
-                    </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</label>
 
                     <!-- WhatsApp -->
                     <button
@@ -268,17 +278,25 @@
 
                             <i class="fab fa-whatsapp text-4xl text-green-500"></i>
 
-                            <div>
+                          <a 
+                           href="https://wa.me/573155321183?text=Hola,%20quiero%20realizar%20un%20pedido%20en%20efectivo"
+                        target="_blank"
+                            class="block"
+>
 
-                                <h3 class="text-xl font-bold text-amber-900">
-                                    Confirmar por WhatsApp
-                                </h3>
+                     <div>
 
-                                <p class="text-gray-500">
-                                    Hablar directamente con la pastelería
-                                </p>
+                    <h3 class="text-xl font-bold text-amber-900">
+                      Pago en efectivo por WhatsApp
+                    </h3>
 
-                            </div>
+                    <p class="text-gray-500">
+                    Hablar directamente con la pastelería
+                    </p>
+
+                  </div>
+
+               </a>
 
                         </div>
 
@@ -352,7 +370,7 @@
                                 ${item.name} x${item.quantity}
                             </span>
                             <span>
-                                $${subtotal.toFixed(2)}
+                                $ ${subtotal.toLocaleString('es-CO')}
                             </span>
                         </div>
                     </div>
@@ -360,7 +378,7 @@
             `;
         }).join('');
 
-        paymentTotal.textContent = `$${total.toFixed(2)}`;
+        paymentTotal.textContent = `$ ${total.toLocaleString('es-CO')}`;
 
         const productImages = cart
             .filter(item => item.image)

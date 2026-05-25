@@ -38,7 +38,7 @@
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
     </script>    
-    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/cart.js?v=2" defer></script>
 
     <style>
 
