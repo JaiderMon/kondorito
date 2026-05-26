@@ -23,7 +23,7 @@ function requestJson(string $url, string $method = 'GET', ?array $payload = null
         $options['http']['content'] = json_encode($payload);
     }
 
-    $response = file_get_contents($url, false, stream_context_create($options));
+    $response = @file_get_contents($url, false, stream_context_create($options));
 
     if ($response === false) {
         throw new RuntimeException('No se pudo contactar el servidor de tracking.');

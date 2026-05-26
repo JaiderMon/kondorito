@@ -96,6 +96,9 @@ $stmt->execute([
 
 $result = $stmt;
 
+$mensajeOk = $_GET['ok'] ?? '';
+$mensajeError = $_GET['error'] ?? '';
+
 ?>
 
 <!DOCTYPE html>
