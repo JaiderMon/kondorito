@@ -80,9 +80,13 @@ function estadoPedidoClase($estado_tracking) {
 }
 
 $correo = $_SESSION['correo'];
+$trackingUrl = rtrim(getenv('TRACKING_SERVER_URL') ?: 'http://localhost:3000', '/');
+$pasteleriaLat = (float) (getenv('PASTELERIA_LAT') ?: 7.077154857097324);
+$pasteleriaLng = (float) (getenv('PASTELERIA_LNG') ?: -73.08790648174613);
 
 $stmtPedidos = $pdo->prepare(
-    "SELECT id, total, estado_tracking, ciudad, direccion, creado_en
+    "SELECT id, total, estado_tracking, ciudad, direccion, lugar_entrega,
+            domiciliario_id, lat_entrega, lng_entrega, creado_en
      FROM pedidos
      WHERE correo_usuario = :correo
      ORDER BY creado_en DESC"
@@ -135,7 +139,10 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
     </script>    
@@ -161,6 +168,17 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
             }
         }
     </script>
+    <style>
+        .client-tracking-map {
+            position: relative;
+            z-index: 0;
+        }
+
+        .client-tracking-map .leaflet-pane,
+        .client-tracking-map .leaflet-control {
+            z-index: 1;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen bg-pastel-cream font-body text-gray-800">
@@ -327,13 +345,46 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
                                         <?php endforeach; ?>
                                     </div>
 
-                                    <div class="mt-5 flex flex-wrap justify-between gap-3 border-t border-pink-100 pt-4 text-sm">
-                                        <span class="text-gray-500">
-                                            Entrega: <?php echo e($pedido['direccion'] ?: 'Sin direcci&oacute;n'); ?>, <?php echo e($pedido['ciudad'] ?: 'Sin ciudad'); ?>
-                                        </span>
-                                        <span class="text-lg font-bold text-pastel-brown">
-                                            Total: $<?php echo number_format((float) $pedido['total'], 2); ?>
-                                        </span>
+                                    <?php
+                                        $direccionEntrega = trim(($pedido['direccion'] ?? '') . ', ' . ($pedido['lugar_entrega'] ?? ''));
+                                        $tieneTracking = !empty($pedido['domiciliario_id'])
+                                            && $pedido['lat_entrega'] !== null
+                                            && $pedido['lng_entrega'] !== null
+                                            && in_array($pedido['estado_tracking'], ['asignado', 'en_camino'], true);
+                                    ?>
+
+                                    <div class="mt-5 border-t border-pink-100 pt-4">
+                                        <div class="flex flex-wrap justify-between gap-3 text-sm">
+                                            <span class="text-gray-500">
+                                                Entrega: <?php echo e($direccionEntrega !== ',' ? $direccionEntrega : 'Sin direcci&oacute;n'); ?>, <?php echo e($pedido['ciudad'] ?: 'Sin ciudad'); ?>
+                                            </span>
+                                            <span class="text-lg font-bold text-pastel-brown">
+                                                Total: $<?php echo number_format((float) $pedido['total'], 2); ?>
+                                            </span>
+                                        </div>
+
+                                        <?php if ($tieneTracking): ?>
+                                            <div
+                                                class="client-tracking-map mt-5 h-72 w-full overflow-hidden rounded-3xl border border-pink-100 bg-white shadow-sm"
+                                                data-client-tracking-map
+                                                data-pedido-id="<?php echo e($pedido['id']); ?>"
+                                                data-domiciliario-id="<?php echo e($pedido['domiciliario_id']); ?>"
+                                                data-destino-lat="<?php echo e($pedido['lat_entrega']); ?>"
+                                                data-destino-lng="<?php echo e($pedido['lng_entrega']); ?>"
+                                                data-destino-texto="<?php echo e(trim($direccionEntrega . ', ' . ($pedido['ciudad'] ?? ''))); ?>"
+                                            ></div>
+                                            <p class="mt-3 text-xs text-gray-500">
+                                                Sigue en tiempo real la ubicaci&oacute;n del domiciliario asignado a este pedido.
+                                            </p>
+                                        <?php elseif (!empty($pedido['domiciliario_id'])): ?>
+                                            <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm text-gray-500">
+                                                El mapa se activar&aacute; cuando el pedido tenga ubicaci&oacute;n de entrega disponible.
+                                            </p>
+                                        <?php else: ?>
+                                            <p class="mt-4 rounded-2xl bg-white px-4 py-3 text-sm text-gray-500">
+                                                El mapa se activar&aacute; cuando la pasteler&iacute;a asigne un domiciliario.
+                                            </p>
+                                        <?php endif; ?>
                                     </div>
                                 </article>
                             <?php endforeach; ?>
@@ -414,17 +465,103 @@ $pedidosHistorial = array_values(array_filter($pedidos, function ($pedido) use (
 
             </div>
 
-            <div class="mt-8 rounded-3xl bg-amber-50 p-6 text-sm text-amber-900 shadow-sm">
-                <div class="flex gap-3">
-                    <i class="fas fa-map-marker-alt mt-1"></i>
-                    <p>
-                        La opci&oacute;n de tracking en tiempo real se activar&aacute; cuando conectemos los pedidos reales con los domiciliarios.
-                    </p>
-                </div>
-            </div>
         </section>
     </main>
 
 <?php include 'cart_modal.php'; ?>
+    <script>
+        const trackingUrl = <?php echo json_encode($trackingUrl); ?>;
+        const pasteleria = {
+            lat: <?php echo json_encode($pasteleriaLat); ?>,
+            lng: <?php echo json_encode($pasteleriaLng); ?>
+        };
+        const trackingMaps = [];
+
+        function createTrackingIcon(html, color) {
+            return L.divIcon({
+                className: '',
+                html: `<div style="width:38px;height:38px;border-radius:999px;background:${color};color:white;display:grid;place-items:center;font-size:18px;border:3px solid white;box-shadow:0 8px 20px rgba(0,0,0,.2)">${html}</div>`,
+                iconSize: [38, 38],
+                iconAnchor: [19, 19]
+            });
+        }
+
+        document.querySelectorAll('[data-client-tracking-map]').forEach((element) => {
+            const destino = [
+                Number(element.dataset.destinoLat),
+                Number(element.dataset.destinoLng)
+            ];
+            const domiciliarioId = Number(element.dataset.domiciliarioId);
+            const map = L.map(element, {
+                scrollWheelZoom: false
+            }).setView(destino, 14);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            const bakeryMarker = L.marker([pasteleria.lat, pasteleria.lng], {
+                icon: createTrackingIcon('<i class="fas fa-home"></i>', '#8b4513')
+            }).addTo(map).bindPopup('Kondorito');
+
+            const destinationMarker = L.marker(destino, {
+                icon: createTrackingIcon('<i class="fas fa-map-marker-alt"></i>', '#d2691e')
+            }).addTo(map).bindPopup(element.dataset.destinoTexto || 'Destino del pedido');
+
+            const bounds = L.latLngBounds([
+                [pasteleria.lat, pasteleria.lng],
+                destino
+            ]);
+
+            map.fitBounds(bounds, {
+                padding: [35, 35],
+                maxZoom: 15
+            });
+
+            trackingMaps.push({
+                map,
+                domiciliarioId,
+                destino,
+                courierMarker: null,
+                routeLine: null,
+                bakeryMarker,
+                destinationMarker
+            });
+        });
+
+        if (trackingMaps.length > 0) {
+            const socket = io(trackingUrl, {
+                transports: ['websocket']
+            });
+
+            socket.on('ubicacion_domiciliario', ({ id, lat, lng }) => {
+                const courierId = Number(id);
+                const position = [Number(lat), Number(lng)];
+
+                trackingMaps
+                    .filter((trackingMap) => trackingMap.domiciliarioId === courierId)
+                    .forEach((trackingMap) => {
+                        if (!trackingMap.courierMarker) {
+                            trackingMap.courierMarker = L.marker(position, {
+                                icon: createTrackingIcon('<i class="fas fa-motorcycle"></i>', '#2563eb')
+                            }).addTo(trackingMap.map).bindPopup('Domiciliario en camino');
+                        } else {
+                            trackingMap.courierMarker.setLatLng(position);
+                        }
+
+                        if (trackingMap.routeLine) {
+                            trackingMap.map.removeLayer(trackingMap.routeLine);
+                        }
+
+                        trackingMap.routeLine = L.polyline([position, trackingMap.destino], {
+                            color: '#2563eb',
+                            weight: 4,
+                            opacity: 0.85,
+                            dashArray: '8 8'
+                        }).addTo(trackingMap.map);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
