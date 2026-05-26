@@ -17,6 +17,26 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #delivery-form input,
+        #delivery-form select,
+        #delivery-form textarea {
+            max-width: 100%;
+            min-width: 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        #delivery-map {
+            position: relative;
+            z-index: 0;
+        }
+
+        #delivery-map .leaflet-pane,
+        #delivery-map .leaflet-control {
+            z-index: 1;
+        }
+    </style>
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
     </script>    
@@ -177,7 +197,7 @@
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                     </div>
 
-                    <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">
                                 Ciudad
@@ -206,7 +226,7 @@
                         </div>
                     </div>
 
-                    <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">
                                 Fecha de entrega
@@ -215,7 +235,7 @@
                                 type="date"
                                 id="delivery-date"
                                 required
-                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                            class="block w-full max-w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                         </div>
 
                         <div>
@@ -226,7 +246,7 @@
                                 type="time"
                                 id="delivery-time"
                                 required
-                                class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                            class="block w-full max-w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                         </div>
                     </div>
 
@@ -251,7 +271,7 @@
                         </div>
 
                         <p class="mt-3 text-sm text-gray-500">
-                            Toca el mapa o mueve el marcador hasta el punto exacto de entrega.
+                            Se recomienda ponre la dirección de entrega en el mapa.
                         </p>
 
                         <input type="hidden" id="delivery-lat" required>
