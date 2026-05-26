@@ -560,7 +560,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="mt-8 bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-3">
-                DescripciÃ³n adicional
+                Descripción adicional
             </p>
 
             <p class="text-lg text-gray-700">
