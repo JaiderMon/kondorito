@@ -181,6 +181,15 @@ $mensajeError = $_GET['error'] ?? '';
 
             </a>
 
+            <a href="monitoreo_domiciliarios.php"
+            class="flex items-center gap-4 hover:bg-orange-50 px-5 py-4 rounded-2xl transition">
+
+                <i class="fas fa-map-location-dot text-blue-500"></i>
+
+                Monitoreo
+
+            </a>
+
         </nav>
 
     </aside>

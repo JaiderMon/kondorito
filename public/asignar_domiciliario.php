@@ -8,6 +8,12 @@ function volverConMensaje(string $tipo, string $mensaje, string $fecha): void
     exit();
 }
 
+function volverSinMensaje(string $fecha): void
+{
+    header('Location: admin.php?fecha=' . urlencode($fecha));
+    exit();
+}
+
 function requestJson(string $url, string $method = 'GET', ?array $payload = null): array
 {
     $options = [
@@ -108,11 +114,7 @@ try {
         volverConMensaje('error', $respuesta['error'] ?? 'No se pudo asignar el pedido.', $fecha);
     }
 
-    $mensaje = !empty($respuesta['domiciliarioConectado'])
-        ? 'Pedido asignado y enviado a la PWA de ' . $domiciliario['nombre'] . '.'
-        : 'Pedido asignado a ' . $domiciliario['nombre'] . ', pero el domiciliario no esta conectado.';
-
-    volverConMensaje('ok', $mensaje, $fecha);
+    volverSinMensaje($fecha);
 } catch (Throwable $error) {
     volverConMensaje('error', $error->getMessage(), $fecha);
 }

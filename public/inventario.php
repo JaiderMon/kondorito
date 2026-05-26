@@ -152,6 +152,15 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
             </a>
 
+            <a href="monitoreo_domiciliarios.php"
+            class="flex items-center gap-4 hover:bg-orange-50 p-4 rounded-2xl transition">
+
+                <i class="fas fa-map-location-dot text-blue-500"></i>
+
+                Monitoreo
+
+            </a>
+
         </nav>
 
     </aside>
