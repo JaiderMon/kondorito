@@ -96,7 +96,11 @@ try {
         volverConMensaje('error', $respuesta['error'] ?? 'No se pudo asignar el pedido.', $fecha);
     }
 
-    volverConMensaje('ok', 'Pedido asignado correctamente a ' . $domiciliario['nombre'] . '.', $fecha);
+    $mensaje = !empty($respuesta['domiciliarioConectado'])
+        ? 'Pedido asignado y enviado a la PWA de ' . $domiciliario['nombre'] . '.'
+        : 'Pedido asignado a ' . $domiciliario['nombre'] . ', pero el domiciliario no esta conectado.';
+
+    volverConMensaje('ok', $mensaje, $fecha);
 } catch (Throwable $error) {
     volverConMensaje('error', $error->getMessage(), $fecha);
 }

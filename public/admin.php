@@ -268,6 +268,19 @@ $mensajeError = $_GET['error'] ?? '';
 </div>
 
 
+<?php if ($mensajeOk !== ''): ?>
+    <div class="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-green-700 font-semibold">
+        <?= htmlspecialchars($mensajeOk, ENT_QUOTES, 'UTF-8') ?>
+    </div>
+<?php endif; ?>
+
+<?php if ($mensajeError !== ''): ?>
+    <div class="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-700 font-semibold">
+        <?= htmlspecialchars($mensajeError, ENT_QUOTES, 'UTF-8') ?>
+    </div>
+<?php endif; ?>
+
+
 
         <!-- PEDIDOS -->
         <section id="pedidos" class="mb-16">
