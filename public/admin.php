@@ -196,7 +196,7 @@ $mensajeError = $_GET['error'] ?? '';
 
                 <h1 class="text-5xl font-bold text-amber-900 mb-3">
 
-                    Panel administrativo ðŸ°
+                    Panel administrativo
 
                 </h1>
 
