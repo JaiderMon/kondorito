@@ -143,7 +143,7 @@ $mensajeError = $_GET['error'] ?? '';
                 </h1>
 
                 <p class="text-gray-500">
-                    AdministraciÃ³n
+                    Administración
                 </p>
 
             </div>
@@ -159,7 +159,6 @@ $mensajeError = $_GET['error'] ?? '';
                 <i class="fas fa-chart-line"></i>
 
                 Panel administrativo
-
             </a>
 
 
@@ -350,7 +349,7 @@ $mensajeError = $_GET['error'] ?? '';
     <option value="en_preparacion"
         <?php if($pedido['estado_tracking'] == 'en_preparacion') echo 'selected'; ?>>
 
-        En preparaciÃ³n
+        En preparación
 
     </option>
 
@@ -409,7 +408,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="flex items-center gap-4 mb-8">
 
             <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-2xl">
-                ðŸ‘¤
+                
             </div>
 
             <div>
@@ -455,7 +454,7 @@ $mensajeError = $_GET['error'] ?? '';
             <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
 
                 <p class="text-sm text-gray-500 mb-2">
-                    TelÃ©fono
+                    Teléfono
                 </p>
 
                 <p class="font-bold text-gray-800">
@@ -479,7 +478,7 @@ $mensajeError = $_GET['error'] ?? '';
             <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
 
                 <p class="text-sm text-gray-500 mb-2">
-                    MÃ©todo de pago
+                    Método de pago
                 </p>
 
                 <p class="font-bold text-gray-800">
@@ -533,7 +532,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-2">
-                CategorÃ­a
+                Categoría
             </p>
 
             <h4 class="text-2xl font-bold text-amber-900">
