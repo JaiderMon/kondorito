@@ -15,6 +15,8 @@
     <!-- FontAwesome -->
     <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         window.cartUserKey = <?php echo isset($_SESSION['correo']) ? json_encode($_SESSION['correo']) : 'null'; ?>;
     </script>    
@@ -238,6 +240,23 @@
                             placeholder="Ej: llamar al llegar, torre, apartamento, porteria..."
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100"></textarea>
                     </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Ubicacion exacta de entrega
+                        </label>
+
+                        <div class="rounded-3xl overflow-hidden border border-pink-200">
+                            <div id="delivery-map" class="h-72 w-full"></div>
+                        </div>
+
+                        <p class="mt-3 text-sm text-gray-500">
+                            Toca el mapa o mueve el marcador hasta el punto exacto de entrega.
+                        </p>
+
+                        <input type="hidden" id="delivery-lat" required>
+                        <input type="hidden" id="delivery-lng" required>
+                    </div>
                 </form>
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
@@ -335,6 +354,46 @@
 
     let cart = [];
     const deliveryStorageKey = `kondorito_delivery:${window.cartUserKey || 'guest'}`;
+    const defaultDeliveryPosition = [7.077154857097324, -73.08790648174613];
+    let deliveryMap = null;
+    let deliveryMarker = null;
+
+    function setDeliveryPosition(lat, lng) {
+        document.getElementById('delivery-lat').value = lat;
+        document.getElementById('delivery-lng').value = lng;
+
+        if (deliveryMarker) {
+            deliveryMarker.setLatLng([lat, lng]);
+        }
+    }
+
+    function initDeliveryMap(savedDelivery = {}) {
+        const initialLat = Number(savedDelivery.lat_entrega) || defaultDeliveryPosition[0];
+        const initialLng = Number(savedDelivery.lng_entrega) || defaultDeliveryPosition[1];
+
+        deliveryMap = L.map('delivery-map').setView([initialLat, initialLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(deliveryMap);
+
+        deliveryMarker = L.marker([initialLat, initialLng], {
+            draggable: true
+        }).addTo(deliveryMap);
+
+        setDeliveryPosition(initialLat, initialLng);
+
+        deliveryMap.on('click', (event) => {
+            setDeliveryPosition(event.latlng.lat, event.latlng.lng);
+        });
+
+        deliveryMarker.on('dragend', () => {
+            const position = deliveryMarker.getLatLng();
+            setDeliveryPosition(position.lat, position.lng);
+        });
+
+        setTimeout(() => deliveryMap.invalidateSize(), 250);
+    }
 
     document.addEventListener('DOMContentLoaded', function () {
         cart = Cart.getItems();
@@ -419,6 +478,8 @@
         document.getElementById('delivery-date').value = savedDelivery.fecha_entrega || '';
         document.getElementById('delivery-time').value = savedDelivery.hora_entrega || '';
         document.getElementById('delivery-notes').value = savedDelivery.indicaciones_entrega || '';
+
+        initDeliveryMap(savedDelivery);
     });
           
         async function payWithStripe() {
@@ -441,8 +502,15 @@
             telefono: document.getElementById('delivery-phone').value.trim(),
             fecha_entrega: document.getElementById('delivery-date').value,
             hora_entrega: document.getElementById('delivery-time').value,
-            indicaciones_entrega: document.getElementById('delivery-notes').value.trim()
+            indicaciones_entrega: document.getElementById('delivery-notes').value.trim(),
+            lat_entrega: document.getElementById('delivery-lat').value,
+            lng_entrega: document.getElementById('delivery-lng').value
         };
+
+        if (!delivery.lat_entrega || !delivery.lng_entrega) {
+            alert('Selecciona la ubicacion exacta de entrega en el mapa.');
+            return;
+        }
 
         localStorage.setItem(deliveryStorageKey, JSON.stringify(delivery));
 

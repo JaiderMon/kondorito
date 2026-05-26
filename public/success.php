@@ -34,7 +34,7 @@ require_once __DIR__ . '/../conexion.php';
             return;
         }
 
-        if (!delivery.direccion || !delivery.lugar_entrega || !delivery.ciudad || !delivery.telefono || !delivery.fecha_entrega || !delivery.hora_entrega) {
+        if (!delivery.direccion || !delivery.lugar_entrega || !delivery.ciudad || !delivery.telefono || !delivery.fecha_entrega || !delivery.hora_entrega || !delivery.lat_entrega || !delivery.lng_entrega) {
             statusElement.textContent = 'No encontramos los datos de entrega del pedido.';
             return;
         }

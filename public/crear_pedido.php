@@ -34,6 +34,8 @@ $telefonoEntrega = trim($delivery['telefono'] ?? '');
 $fechaEntrega = trim($delivery['fecha_entrega'] ?? '');
 $horaEntrega = trim($delivery['hora_entrega'] ?? '');
 $indicacionesEntrega = trim($delivery['indicaciones_entrega'] ?? '');
+$latEntrega = filter_var($delivery['lat_entrega'] ?? null, FILTER_VALIDATE_FLOAT);
+$lngEntrega = filter_var($delivery['lng_entrega'] ?? null, FILTER_VALIDATE_FLOAT);
 
 if (
     $direccionEntrega === '' ||
@@ -41,7 +43,9 @@ if (
     $ciudadEntrega === '' ||
     $telefonoEntrega === '' ||
     $fechaEntrega === '' ||
-    $horaEntrega === ''
+    $horaEntrega === '' ||
+    $latEntrega === false ||
+    $lngEntrega === false
 ) {
     http_response_code(400);
     echo json_encode([
@@ -111,6 +115,8 @@ try {
             fecha_entrega,
             hora_entrega,
             indicaciones_entrega,
+            lat_entrega,
+            lng_entrega,
             total,
             estado,
             metodo_pago
@@ -124,6 +130,8 @@ try {
             :fecha_entrega,
             :hora_entrega,
             :indicaciones_entrega,
+            :lat_entrega,
+            :lng_entrega,
             :total,
             'pagado',
             'stripe'
@@ -141,6 +149,8 @@ try {
         'fecha_entrega' => $fechaEntrega,
         'hora_entrega' => $horaEntrega,
         'indicaciones_entrega' => $indicacionesEntrega !== '' ? $indicacionesEntrega : null,
+        'lat_entrega' => $latEntrega,
+        'lng_entrega' => $lngEntrega,
         'total' => $totalPedido
     ]);
 

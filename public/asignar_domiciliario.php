@@ -48,7 +48,7 @@ if (!$pedidoId || !$domiciliarioId) {
 
 try {
     $stmtPedido = $pdo->prepare("
-        SELECT id, direccion, lugar_entrega, indicaciones_entrega, ciudad, nombre_usuario
+        SELECT id, direccion, lugar_entrega, indicaciones_entrega, ciudad, nombre_usuario, lat_entrega, lng_entrega
         FROM pedidos
         WHERE id = :id
         LIMIT 1
@@ -74,11 +74,19 @@ try {
     }
 
     $trackingUrl = rtrim(getenv('TRACKING_SERVER_URL') ?: 'http://localhost:3000', '/');
-    $direccionBusqueda = trim($pedido['direccion'] . ', ' . $pedido['lugar_entrega'] . ', ' . $pedido['ciudad'] . ', Santander, Colombia');
-    $sugerencias = requestJson($trackingUrl . '/buscar-direccion?q=' . urlencode($direccionBusqueda));
+    $deliveryLat = filter_var($pedido['lat_entrega'] ?? null, FILTER_VALIDATE_FLOAT);
+    $deliveryLng = filter_var($pedido['lng_entrega'] ?? null, FILTER_VALIDATE_FLOAT);
 
-    if (count($sugerencias) === 0 || empty($sugerencias[0]['lat']) || empty($sugerencias[0]['lon'])) {
-        volverConMensaje('error', 'No se pudieron obtener coordenadas para la direccion del pedido.', $fecha);
+    if ($deliveryLat === false || $deliveryLng === false) {
+        $direccionBusqueda = trim($pedido['direccion'] . ', ' . $pedido['lugar_entrega'] . ', ' . $pedido['ciudad'] . ', Santander, Colombia');
+        $sugerencias = requestJson($trackingUrl . '/buscar-direccion?q=' . urlencode($direccionBusqueda));
+
+        if (count($sugerencias) === 0 || empty($sugerencias[0]['lat']) || empty($sugerencias[0]['lon'])) {
+            volverConMensaje('error', 'No se pudieron obtener coordenadas para la direccion del pedido.', $fecha);
+        }
+
+        $deliveryLat = (float) $sugerencias[0]['lat'];
+        $deliveryLng = (float) $sugerencias[0]['lon'];
     }
 
     $descripcion = 'Pedido #' . $pedido['id'] . ' - ' . $pedido['nombre_usuario'];
@@ -90,8 +98,8 @@ try {
     $respuesta = requestJson($trackingUrl . '/asignar-pedido', 'POST', [
         'pedidoId' => $pedidoId,
         'domiciliarioId' => $domiciliarioId,
-        'deliveryLat' => (float) $sugerencias[0]['lat'],
-        'deliveryLng' => (float) $sugerencias[0]['lon'],
+        'deliveryLat' => $deliveryLat,
+        'deliveryLng' => $deliveryLng,
         'direccion' => trim($pedido['direccion'] . ', ' . $pedido['lugar_entrega']),
         'descripcion' => $descripcion,
     ]);
