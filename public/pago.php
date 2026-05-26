@@ -1,4 +1,4 @@
-﻿<?php session_start(); ?>
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -102,11 +102,11 @@
         <div class="text-center mb-14">
 
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-amber-900 mb-4">
-                Finalizar pedido ðŸ°
+                Finalizar pedido
             </h1>
 
             <p class="text-gray-600 text-lg">
-                Selecciona tu mÃ©todo de pago
+                Selecciona tu m&eacute;todo de pago
             </p>
 
         </div>
@@ -153,7 +153,7 @@
                 <form id="delivery-form" class="hidden space-y-5">
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-2">
-                            Direccion principal
+                            Direcci&oacute;n principal
                         </label>
                         <input
                             type="text"
@@ -171,7 +171,7 @@
                             type="text"
                             id="delivery-place"
                             required
-                            placeholder="Ej: Villa cañaveral"
+                            placeholder="Ej: Villa canaveral"
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                     </div>
 
@@ -187,14 +187,14 @@
                                 <option value="">Selecciona</option>
                                 <option value="Bucaramanga">Bucaramanga</option>
                                 <option value="Floridablanca">Floridablanca</option>
-                                <option value="GirÃ³n">GirÃ³n</option>
+                                <option value="Gir&oacute;n">Gir&oacute;n</option>
                                 <option value="Piedecuesta">Piedecuesta</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">
-                                TelÃ©fono
+                                Tel&eacute;fono
                             </label>
                             <input
                                 type="tel"
@@ -202,18 +202,6 @@
                                 required
                                 class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                         </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-600 mb-2">
-                            Conjunto o lugar de entrega
-                        </label>
-                        <input
-                            type="text"
-                            id="delivery-place"
-                            required
-                            placeholder="Ej: Villa cañaveral"
-                            class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                     </div>
 
                     <div class="grid sm:grid-cols-2 gap-4">
@@ -247,14 +235,14 @@
                         <textarea
                             id="delivery-notes"
                             rows="3"
-                            placeholder="Ej: llamar al llegar, torre, apartamento, porterÃ­a..."
+                            placeholder="Ej: llamar al llegar, torre, apartamento, porteria..."
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100"></textarea>
                     </div>
                 </form>
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
 
-                    MÃ©todo de pago
+                    M&eacute;todo de pago
 
                 </h2>
 
@@ -279,7 +267,7 @@
             <div>
 
                 <h3 class="text-xl font-bold text-amber-900">
-                    Tarjeta dÃ©bito/crÃ©dito
+                    Tarjeta d&eacute;bito/cr&eacute;dito
                 </h3>
 
                 <p class="text-gray-500">
@@ -315,7 +303,7 @@
                     </h3>
 
                     <p class="text-gray-500">
-                    Hablar directamente con la pastelerÃ­a
+                    Hablar directamente con la pasteler&iacute;a
                     </p>
 
                   </div>
