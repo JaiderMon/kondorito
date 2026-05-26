@@ -1,4 +1,4 @@
-<?php session_start(); ?>
+﻿<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -98,15 +98,15 @@
 
     <div class="max-w-5xl mx-auto py-10 md:py-16 px-4 sm:px-6">
 
-        <!-- Título -->
+        <!-- TÃ­tulo -->
         <div class="text-center mb-14">
 
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-amber-900 mb-4">
-                Finalizar pedido 🍰
+                Finalizar pedido ðŸ°
             </h1>
 
             <p class="text-gray-600 text-lg">
-                Selecciona tu método de pago
+                Selecciona tu mÃ©todo de pago
             </p>
 
         </div>
@@ -141,7 +141,7 @@
 
             </div>
 
-            <!-- Métodos -->
+            <!-- MÃ©todos -->
             <div class="order-3 md:order-2 bg-white rounded-3xl shadow-2xl p-6 sm:p-10 flex flex-col justify-center min-h-[420px]">
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
@@ -153,13 +153,25 @@
                 <form id="delivery-form" class="hidden space-y-5">
                     <div>
                         <label class="block text-sm font-semibold text-gray-600 mb-2">
-                            Dirección de entrega
+                            Direccion principal
                         </label>
                         <input
                             type="text"
                             id="delivery-address"
                             required
-                            placeholder="Ej: Balcones de la colina Cra 24#35-200"
+                            placeholder="Ej: Cra 24#35-200"
+                            class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Conjunto o lugar de entrega
+                        </label>
+                        <input
+                            type="text"
+                            id="delivery-place"
+                            required
+                            placeholder="Ej: Villa cañaveral"
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                     </div>
 
@@ -175,14 +187,14 @@
                                 <option value="">Selecciona</option>
                                 <option value="Bucaramanga">Bucaramanga</option>
                                 <option value="Floridablanca">Floridablanca</option>
-                                <option value="Girón">Girón</option>
+                                <option value="GirÃ³n">GirÃ³n</option>
                                 <option value="Piedecuesta">Piedecuesta</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-gray-600 mb-2">
-                                Teléfono
+                                TelÃ©fono
                             </label>
                             <input
                                 type="tel"
@@ -190,6 +202,18 @@
                                 required
                                 class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                         </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-600 mb-2">
+                            Conjunto o lugar de entrega
+                        </label>
+                        <input
+                            type="text"
+                            id="delivery-place"
+                            required
+                            placeholder="Ej: Villa cañaveral"
+                            class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100">
                     </div>
 
                     <div class="grid sm:grid-cols-2 gap-4">
@@ -223,14 +247,14 @@
                         <textarea
                             id="delivery-notes"
                             rows="3"
-                            placeholder="Ej: llamar al llegar, torre, apartamento, portería..."
+                            placeholder="Ej: llamar al llegar, torre, apartamento, porterÃ­a..."
                             class="w-full rounded-2xl border border-pink-200 px-4 py-3 outline-none focus:ring-4 focus:ring-orange-100"></textarea>
                     </div>
                 </form>
 
                 <h2 class="text-3xl font-bold text-amber-900 mb-8">
 
-                    Método de pago
+                    MÃ©todo de pago
 
                 </h2>
 
@@ -255,7 +279,7 @@
             <div>
 
                 <h3 class="text-xl font-bold text-amber-900">
-                    Tarjeta débito/crédito
+                    Tarjeta dÃ©bito/crÃ©dito
                 </h3>
 
                 <p class="text-gray-500">
@@ -291,7 +315,7 @@
                     </h3>
 
                     <p class="text-gray-500">
-                    Hablar directamente con la pastelería
+                    Hablar directamente con la pastelerÃ­a
                     </p>
 
                   </div>
@@ -304,7 +328,7 @@
 
                 </div>
 
-                <!-- Botón -->
+                <!-- BotÃ³n -->
                 <button onclick="payWithStripe()"
                 class="w-full mt-10 bg-amber-900 hover:bg-orange-500 text-white py-5 rounded-full text-lg font-bold transition">
 
@@ -401,6 +425,7 @@
         const savedDelivery = JSON.parse(localStorage.getItem(deliveryStorageKey) || '{}');
 
         document.getElementById('delivery-address').value = savedDelivery.direccion || '';
+        document.getElementById('delivery-place').value = savedDelivery.lugar_entrega || '';
         document.getElementById('delivery-city').value = savedDelivery.ciudad || '';
         document.getElementById('delivery-phone').value = savedDelivery.telefono || '';
         document.getElementById('delivery-date').value = savedDelivery.fecha_entrega || '';
@@ -423,6 +448,7 @@
 
         const delivery = {
             direccion: document.getElementById('delivery-address').value.trim(),
+            lugar_entrega: document.getElementById('delivery-place').value.trim(),
             ciudad: document.getElementById('delivery-city').value,
             telefono: document.getElementById('delivery-phone').value.trim(),
             fecha_entrega: document.getElementById('delivery-date').value,
@@ -460,3 +486,4 @@
 </body>
 
 </html>
+

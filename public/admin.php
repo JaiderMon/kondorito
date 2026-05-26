@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 
 require_once __DIR__ . '/../conexion.php';
@@ -58,6 +58,8 @@ while($pedido = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 'id' => $pedido['id'],
                 'nombre_usuario' => $pedido['nombre_usuario'],
                 'direccion' => $pedido['direccion'],
+                'lugar_entrega' => $pedido['lugar_entrega'] ?? '',
+                'indicaciones_entrega' => $pedido['indicaciones_entrega'] ?? '',
                 'telefono' => $pedido['telefono'],
                 'ciudad' => $pedido['ciudad'],
                 'metodo_pago' => $pedido['metodo_pago'],
@@ -141,7 +143,7 @@ $mensajeError = $_GET['error'] ?? '';
                 </h1>
 
                 <p class="text-gray-500">
-                    Administración
+                    AdministraciÃ³n
                 </p>
 
             </div>
@@ -195,7 +197,7 @@ $mensajeError = $_GET['error'] ?? '';
 
                 <h1 class="text-5xl font-bold text-amber-900 mb-3">
 
-                    Panel administrativo 🍰
+                    Panel administrativo ðŸ°
 
                 </h1>
 
@@ -348,7 +350,7 @@ $mensajeError = $_GET['error'] ?? '';
     <option value="en_preparacion"
         <?php if($pedido['estado_tracking'] == 'en_preparacion') echo 'selected'; ?>>
 
-        En preparación
+        En preparaciÃ³n
 
     </option>
 
@@ -407,7 +409,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="flex items-center gap-4 mb-8">
 
             <div class="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-2xl">
-                👤
+                ðŸ‘¤
             </div>
 
             <div>
@@ -429,7 +431,7 @@ $mensajeError = $_GET['error'] ?? '';
             <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
 
                 <p class="text-sm text-gray-500 mb-2">
-                    Dirección
+                    Direccion principal
                 </p>
 
                 <p class="font-bold text-gray-800 leading-relaxed">
@@ -441,7 +443,19 @@ $mensajeError = $_GET['error'] ?? '';
             <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
 
                 <p class="text-sm text-gray-500 mb-2">
-                    Teléfono
+                    Conjunto o lugar
+                </p>
+
+                <p class="font-bold text-gray-800 leading-relaxed">
+                    <?= htmlspecialchars($pedido['lugar_entrega'] ?? '', ENT_QUOTES, 'UTF-8') ?>
+                </p>
+
+            </div>
+
+            <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
+
+                <p class="text-sm text-gray-500 mb-2">
+                    TelÃ©fono
                 </p>
 
                 <p class="font-bold text-gray-800">
@@ -465,7 +479,7 @@ $mensajeError = $_GET['error'] ?? '';
             <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100">
 
                 <p class="text-sm text-gray-500 mb-2">
-                    Método de pago
+                    MÃ©todo de pago
                 </p>
 
                 <p class="font-bold text-gray-800">
@@ -473,6 +487,20 @@ $mensajeError = $_GET['error'] ?? '';
                 </p>
 
             </div>
+
+            <?php if (!empty($pedido['indicaciones_entrega'])): ?>
+                <div class="bg-orange-50 rounded-3xl p-5 border border-orange-100 md:col-span-2">
+
+                    <p class="text-sm text-gray-500 mb-2">
+                        Indicaciones de entrega
+                    </p>
+
+                    <p class="font-bold text-gray-800 leading-relaxed">
+                        <?= htmlspecialchars($pedido['indicaciones_entrega'], ENT_QUOTES, 'UTF-8') ?>
+                    </p>
+
+                </div>
+            <?php endif; ?>
 
         </div>  
 
@@ -505,7 +533,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-2">
-                Categoría
+                CategorÃ­a
             </p>
 
             <h4 class="text-2xl font-bold text-amber-900">
@@ -533,7 +561,7 @@ $mensajeError = $_GET['error'] ?? '';
         <div class="mt-8 bg-white rounded-[25px] p-6 shadow-sm">
 
             <p class="text-gray-500 mb-3">
-                Descripción adicional
+                DescripciÃ³n adicional
             </p>
 
             <p class="text-lg text-gray-700">
@@ -605,3 +633,4 @@ $mensajeError = $_GET['error'] ?? '';
 </body>
 
 </html>
+

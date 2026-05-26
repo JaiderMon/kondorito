@@ -48,7 +48,7 @@ if (!$pedidoId || !$domiciliarioId) {
 
 try {
     $stmtPedido = $pdo->prepare("
-        SELECT id, direccion, ciudad, nombre_usuario
+        SELECT id, direccion, lugar_entrega, indicaciones_entrega, ciudad, nombre_usuario
         FROM pedidos
         WHERE id = :id
         LIMIT 1
@@ -74,7 +74,7 @@ try {
     }
 
     $trackingUrl = rtrim(getenv('TRACKING_SERVER_URL') ?: 'http://localhost:3000', '/');
-    $direccionBusqueda = trim($pedido['direccion'] . ', ' . $pedido['ciudad'] . ', Santander, Colombia');
+    $direccionBusqueda = trim($pedido['direccion'] . ', ' . $pedido['lugar_entrega'] . ', ' . $pedido['ciudad'] . ', Santander, Colombia');
     $sugerencias = requestJson($trackingUrl . '/buscar-direccion?q=' . urlencode($direccionBusqueda));
 
     if (count($sugerencias) === 0 || empty($sugerencias[0]['lat']) || empty($sugerencias[0]['lon'])) {
@@ -83,12 +83,16 @@ try {
 
     $descripcion = 'Pedido #' . $pedido['id'] . ' - ' . $pedido['nombre_usuario'];
 
+    if (!empty($pedido['indicaciones_entrega'])) {
+        $descripcion .= ' - ' . $pedido['indicaciones_entrega'];
+    }
+
     $respuesta = requestJson($trackingUrl . '/asignar-pedido', 'POST', [
         'pedidoId' => $pedidoId,
         'domiciliarioId' => $domiciliarioId,
         'deliveryLat' => (float) $sugerencias[0]['lat'],
         'deliveryLng' => (float) $sugerencias[0]['lon'],
-        'direccion' => $pedido['direccion'],
+        'direccion' => trim($pedido['direccion'] . ', ' . $pedido['lugar_entrega']),
         'descripcion' => $descripcion,
     ]);
 

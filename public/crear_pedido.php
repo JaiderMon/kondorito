@@ -28,6 +28,7 @@ if (!is_array($cart) || count($cart) === 0) {
 }
 
 $direccionEntrega = trim($delivery['direccion'] ?? '');
+$lugarEntrega = trim($delivery['lugar_entrega'] ?? '');
 $ciudadEntrega = trim($delivery['ciudad'] ?? '');
 $telefonoEntrega = trim($delivery['telefono'] ?? '');
 $fechaEntrega = trim($delivery['fecha_entrega'] ?? '');
@@ -36,6 +37,7 @@ $indicacionesEntrega = trim($delivery['indicaciones_entrega'] ?? '');
 
 if (
     $direccionEntrega === '' ||
+    $lugarEntrega === '' ||
     $ciudadEntrega === '' ||
     $telefonoEntrega === '' ||
     $fechaEntrega === '' ||
@@ -105,6 +107,7 @@ try {
             telefono,
             ciudad,
             direccion,
+            lugar_entrega,
             fecha_entrega,
             hora_entrega,
             indicaciones_entrega,
@@ -117,6 +120,7 @@ try {
             :telefono,
             :ciudad,
             :direccion,
+            :lugar_entrega,
             :fecha_entrega,
             :hora_entrega,
             :indicaciones_entrega,
@@ -133,6 +137,7 @@ try {
         'telefono' => $telefonoEntrega,
         'ciudad' => $ciudadEntrega,
         'direccion' => $direccionEntrega,
+        'lugar_entrega' => $lugarEntrega,
         'fecha_entrega' => $fechaEntrega,
         'hora_entrega' => $horaEntrega,
         'indicaciones_entrega' => $indicacionesEntrega !== '' ? $indicacionesEntrega : null,
