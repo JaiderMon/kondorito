@@ -387,7 +387,7 @@ class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 items-center justify-cen
         <div class="flex justify-between items-center mt-auto">
 
             <span class="text-lg font-bold text-primary">
-                $${product.price.toFixed(2)}
+                $ ${Number(product.price).toLocaleString('es-CO')}
             </span>
 
            <button onclick="${
@@ -454,7 +454,7 @@ function openProductModal(productId) {
     document.getElementById("modalImage").src = product.image;
     document.getElementById("modalName").textContent = product.name;
     document.getElementById("modalDescription").textContent = product.description;
-    document.getElementById("modalPrice").textContent = `$${product.price.toFixed(2)}`;
+    document.getElementById("modalPrice").textContent = `$ ${Number(product.price).toLocaleString('es-CO')}`;
 
     document.getElementById("cakeSize").selectedIndex = 0;
     document.getElementById("cakeFill").selectedIndex = 0;
