@@ -321,37 +321,39 @@
 
 </label>
 
-                    <!-- WhatsApp -->
-                    <button
-                    class="w-full border-2 border-pink-200 hover:border-green-500 rounded-3xl p-6 transition text-left">
+                    <!-- EFECTIVO -->
+<label class="block cursor-pointer">
 
-                        <div class="flex items-center gap-5">
+    <input 
+        type="radio" 
+        name="metodo_pago" 
+        value="efectivo"
+        class="hidden peer"
+    >
 
-                            <i class="fab fa-whatsapp text-4xl text-green-500"></i>
+    <div class="w-full border-2 border-pink-200 peer-checked:border-green-500 peer-checked:bg-green-50 rounded-3xl p-6 transition text-left">
 
-                          <a 
-                           href="https://wa.me/573155321183?text=Hola,%20quiero%20realizar%20un%20pedido%20en%20efectivo"
-                        target="_blank"
-                            class="block"
->
+        <div class="flex items-center gap-5">
 
-                     <div>
+            <i class="fas fa-money-bill-wave text-4xl text-green-500"></i>
 
-                    <h3 class="text-xl font-bold text-amber-900">
-                      Pago en efectivo por WhatsApp
-                    </h3>
+            <div>
 
-                    <p class="text-gray-500">
-                    Hablar directamente con la pasteler&iacute;a
-                    </p>
+                <h3 class="text-xl font-bold text-amber-900">
+                    Pago en efectivo
+                </h3>
 
-                  </div>
+                <p class="text-gray-500">
+                    Paga al recibir el pedido
+                </p>
 
-               </a>
+            </div>
 
-                        </div>
+        </div>
 
-                    </button>
+    </div>
+
+</label>
 
                 </div>
 
@@ -503,7 +505,14 @@
     });
           
         async function payWithStripe() {
+         const metodo = document.querySelector('input[name="metodo_pago"]:checked');
 
+        if (!metodo) {
+
+         alert('Selecciona un método de pago.');
+         return;
+
+        }
         if (cart.length === 0) {
             alert('No hay productos en el carrito.');
             return;
@@ -533,6 +542,40 @@
         }
 
         localStorage.setItem(deliveryStorageKey, JSON.stringify(delivery));
+        
+        // EFECTIVO
+if (metodo.value === 'efectivo') {
+
+    const response = await fetch('crear_pedido.php', {
+
+        method: 'POST',
+
+        headers: {
+            'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            cart: cart,
+            delivery: delivery,
+            metodo_pago: 'efectivo'
+        })
+
+    });
+
+    const data = await response.json();
+
+    if (data.ok) {
+
+        window.location.href = 'success.php?metodo=efectivo';
+
+    } else {
+
+        alert(data.error || 'No se pudo crear el pedido.');
+
+    }
+
+    return;
+}
 
         const response = await fetch('stripe-checkout.php', {
 

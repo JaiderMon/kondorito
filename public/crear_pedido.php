@@ -17,6 +17,7 @@ if (!isset($_SESSION['correo'], $_SESSION['usuario'])) {
 $payload = json_decode(file_get_contents('php://input'), true);
 $cart = $payload['cart'] ?? $payload;
 $delivery = $payload['delivery'] ?? [];
+$metodoPago = $payload['metodo_pago'] ?? 'stripe';
 
 if (!is_array($cart) || count($cart) === 0) {
     http_response_code(400);
@@ -133,8 +134,8 @@ try {
             :lat_entrega,
             :lng_entrega,
             :total,
-            'pagado',
-            'stripe'
+            :estado,
+            :metodo_pago
         )
         RETURNING id"
     );
@@ -151,8 +152,13 @@ try {
         'indicaciones_entrega' => $indicacionesEntrega !== '' ? $indicacionesEntrega : null,
         'lat_entrega' => $latEntrega,
         'lng_entrega' => $lngEntrega,
-        'total' => $totalPedido
-    ]);
+        'total' => $totalPedido,
+        'estado' => $metodoPago === 'efectivo'
+        ? 'pendiente'
+        : 'pagado',
+
+        'metodo_pago' => $metodoPago
+       ]);
 
     $pedidoId = $stmtPedido->fetchColumn();
 

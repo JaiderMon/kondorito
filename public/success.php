@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../conexion.php';
+$metodo = $_GET['metodo'] ?? 'stripe';
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +24,7 @@ require_once __DIR__ . '/../conexion.php';
 </head>
 
 <script>
+    const metodoPago = "<?php echo $metodo; ?>";
     document.addEventListener('DOMContentLoaded', async function () {
         const statusElement = document.getElementById('order-status');
         const cart = window.Cart ? Cart.getItems() : [];
@@ -40,6 +42,15 @@ require_once __DIR__ . '/../conexion.php';
         }
 
         try {
+             if (metodoPago === 'efectivo') {
+
+        localStorage.removeItem(`cart:${window.cartUserKey}`);
+        localStorage.removeItem('cart:guest');
+        localStorage.removeItem(deliveryStorageKey);
+
+        statusElement.textContent = 'Tu pedido fue registrado correctamente.';
+        return;
+    }
             const response = await fetch('crear_pedido.php', {
                 method: 'POST',
                 headers: {
