@@ -247,6 +247,14 @@
 
     </section>
 
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm text-gray-200">
+                &copy; <?php echo date('Y'); ?> Kondorito Postres y Pasteles. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
 <?php include 'cart_modal.php'; ?>
 </body>
 </html>
