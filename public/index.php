@@ -203,7 +203,7 @@ session_start();
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="text-3xl md:text-4xl font-bold font-display text-pastel-brown mb-4">
-                    Explora por categorías
+                    Categorías
                 </h2>
             </div>
 
@@ -293,9 +293,9 @@ session_start();
                     &copy; 2026 Kondorito Postres y Pasteles. Todos los derechos reservados.
                 </p>
                 <div class="mt-4 flex justify-center space-x-6 text-sm text-gray-500">
-                    <a href="#" class="hover:text-white">Política de privacidad</a>
-                    <a href="#" class="hover:text-white">Términos y condiciones</a>
-                    <a href="#" class="hover:text-white">Política de cookies</a>
+                    <a href="terminos_privacidad.php#terminos" class="hover:text-white">Términos y condiciones</a>
+                    <a href="terminos_privacidad.php#privacidad" class="hover:text-white">Política de privacidad</a>
+                    <a href="terminos_privacidad.php#cookies" class="hover:text-white">Política de cookies</a>
                 </div>
             </div>
         </div>
