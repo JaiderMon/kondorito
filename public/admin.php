@@ -1,6 +1,18 @@
 ﻿<?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../conexion.php';
+
+if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
+
+    header("Location: login.php");
+
+    exit();
+
+}
 
 date_default_timezone_set('America/Bogota');
 $fechaSeleccionada = date('Y-m-d');
