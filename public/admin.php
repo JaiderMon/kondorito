@@ -1,11 +1,5 @@
 ﻿<?php
-session_start();
 
-
-if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
-    header("Location: login.php");
-    exit();
-}
 require_once __DIR__ . '/../conexion.php';
 
 date_default_timezone_set('America/Bogota');
