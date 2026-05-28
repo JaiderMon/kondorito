@@ -33,4 +33,3 @@ function cargarEnv($ruta)
 
 cargarEnv(__DIR__ . DIRECTORY_SEPARATOR . '.env');
 
-?>

@@ -24,4 +24,4 @@ try {
     die('Error de conexion a la base de datos: ' . $e->getMessage());
 }
 
-?>
+
