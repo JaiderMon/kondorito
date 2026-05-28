@@ -4,7 +4,7 @@ session_start();
 
 require_once __DIR__ . '/../conexion.php';
 
-if (!isset($_SESSION['usuario'], $_SESSION['correo'])) {
+if (!isset($_SESSION['admin_id'], $_SESSION['admin_correo'])) {
 
     header("Location: login.php");
 
