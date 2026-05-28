@@ -1,10 +1,11 @@
 ﻿<?php
-
 session_start();
 
-if(!isset($_SESSION['usuario'])){
+if(!isset($_SESSION['rol']) || $_SESSION['rol'] != 'admin'){
+
     header("Location: login.php");
-    exit();
+
+    exit;
 }
 
 require_once __DIR__ . '/../conexion.php';
